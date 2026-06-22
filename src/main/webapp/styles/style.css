@@ -1,0 +1,31 @@
+@charset "UTF-8";
+
+
+body {
+    /* Diciamo al CSS di usare la nostra immagine e, se non la trova, di usare il nero come ruota di scorta */
+    background-image: url('../images/Sushi_Sfondo.jpeg'); 
+    
+    /* Regole fondamentali per renderla perfetta su tutti gli schermi: */
+    background-size: cover;        /* Copre tutto lo schermo senza deformarsi */
+    background-position: center;   /* Centra l'immagine sia in alto/basso che a destra/sinistra */
+    background-attachment: fixed;  /* L'immagine resta ferma sullo sfondo mentre l'utente scatta verso il basso */
+    background-repeat: no-repeat;  /* Impedisce all'immagine di ripetersi come un mosaico se lo schermo è grande */
+
+    color: #ffffff;            
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    
+    /* Questa riga serve a garantire che la pagina sia alta almeno quanto tutto lo schermo del browser */
+    min-height: 100vh; 
+}
+
+h1 {
+    color: #ff3838;            
+    text-align: center;
+    margin-top: 50px;
+    font-size: 3rem; /* Lo facciamo un po' più grande e importante */
+    
+    /* Crea un'ombra nera intorno alle lettere per farle risaltare su qualsiasi sfondo */
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); 
+}
