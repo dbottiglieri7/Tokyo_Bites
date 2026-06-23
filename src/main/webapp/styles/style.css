@@ -83,35 +83,27 @@ h1 {
     padding-bottom: 5px;
 }
     
-    
-    
-    
-    
-    
-    
- /* --- Modulo di Login --- */
-/* --- Contenitore Principale del Login (Sincronizzato con il JSP) --- */
+/* --- Modulo di Login --- */
 .login-page-wrapper {
     display: flex;
-    justify-content: center;  /* Centra il box in orizzontale */
-    align-items: center;      /* Centra il box in verticale */
-    min-height: calc(100vh - 80px); /* Occupa l'altezza dello schermo togliendo la navbar */
-    padding-top: 80px;        /* Spinge il box sotto la navbar fissa */
+    justify-content: center;  
+    align-items: center;      
+    min-height: calc(100vh - 80px); 
+    padding-top: 80px;        
     box-sizing: border-box;
     width: 100%;
 }
 
-/* --- Il Box Rettangolare Scuro --- */
 .login-box {
-    background-color: #121212; /* Sfondo nero solido */
+    background-color: #121212; 
     padding: 40px;
     border-radius: 10px;
-    border: 2px solid #ff3838; /* Bordino rosso in stile Tokyo */
+    border: 2px solid #ff3838; 
     width: 100%;
-    max-width: 380px;          /* Larghezza massima del rettangolo */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); /* Ombra profonda */
+    max-width: 380px;          
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); 
     text-align: center;
-    position: relative;        /* Mantiene gli elementi interni allineati correttamente */
+    position: relative;        
 }
 
 .login-box h2 {
@@ -121,10 +113,9 @@ h1 {
     font-size: 1.8rem;
 }
 
-/* --- Form e Campi di Input --- */
 .form-group {
     margin-bottom: 20px;
-    text-align: left;         /* Allinea le etichette a sinistra rispetto alla casella */
+    text-align: left;         
 }
 
 .form-group label {
@@ -139,7 +130,7 @@ h1 {
     width: 100%;
     padding: 12px;
     border: 1px solid #444444;
-    background-color: #222222; /* Sfondo grigio scuro interno alle caselle */
+    background-color: #222222; 
     color: #ffffff;
     border-radius: 5px;
     box-sizing: border-box;
@@ -151,7 +142,6 @@ h1 {
     outline: none;
 }
 
-/* --- Pulsante Invia --- */
 .btn-login {
     width: 100%;
     padding: 12px;
@@ -168,4 +158,149 @@ h1 {
 
 .btn-login:hover {
     background-color: #e02424;
+}
+
+/* --- INTEGRAZIONE SFONDO E STRUTTURA MENU --- */
+
+/* Forza lo sfondo scuro uniforme ed elimina l'immagine gigante della home */
+body.menu-page {
+    background-image: none !important;
+    background: #0b0b0b !important; 
+    background-color: #0b0b0b !important;
+}
+
+/* Contenitore del Menu */
+.menu-container {
+    max-width: 1200px;
+    margin: 120px auto 40px auto; /* Aumentato il margine superiore per non andare sotto la navbar fissa */
+    padding: 30px;
+    background: #141414; 
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid #222;
+}
+
+.menu-title {
+    color: yellow !important;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+/* --- STILE TABS CATEGORIE --- */
+.categories-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 25px 0 40px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.categories-tabs a.tab {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #1a1a1a;
+    color: #ffffff !important; 
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 30px;
+    border: 1px solid #ff3838;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.categories-tabs a.tab.active, 
+.categories-tabs a.tab:hover {
+    background: #ff3838;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(255, 56, 56, 0.6);
+    transform: translateY(-2px);
+}
+
+/* --- STRUTTURA A GRIGLIA ED ELEMENTI DEL PRODOTTO (Mancavano qui!) --- */
+.products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 30px !important;
+}
+
+.product-card {
+    background: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Blocco di contenimento dell'immagine */
+.product-image-box {
+    width: 100% !important;
+    height: 200px !important; 
+    background: #222 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* Regolazione millimetrica dell'immagine del prodotto */
+.product-img {
+    max-height: 100% !important;
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+}
+
+.product-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-name {
+    color: #ffffff !important;
+    margin: 0 0 8px 0;
+    font-size: 1.3rem;
+}
+
+.product-desc {
+    color: #aaaaaa !important;
+    font-size: 0.9rem;
+    margin: 0 0 20px 0;
+    flex-grow: 1;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-price {
+    color: #ff3838 !important;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.btn-add-cart {
+    background: #ff3838;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.btn-add-cart:hover {
+    background: #e02424;
 }

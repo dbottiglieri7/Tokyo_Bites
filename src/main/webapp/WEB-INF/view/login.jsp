@@ -15,7 +15,7 @@
         </div>
         <ul class="nav-links">
     <li><a href="${pageContext.request.contextPath}/Home">Home</a></li>
-    <li><a href="#">Menu</a></li>
+    <li><a href="${pageContext.request.contextPath}/Menu">Menu</a></li>
     <li><a href="#">Carrello</a></li>
     
     <%-- Controllo dinamico della sessione --%>
