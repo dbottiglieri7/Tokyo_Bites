@@ -13,12 +13,18 @@
         <div class="nav-logo">
             <a href="${pageContext.request.contextPath}/Home">Tokyo Bites 🍣</a>
         </div>
-        <ul class="nav-links">
-            <li><a href="${pageContext.request.contextPath}/Home" class="active">Home</a></li>
-            <li><a href="#">Menu</a></li>
-            <li><a href="#">Carrello</a></li>
-            <li><a href="#">Accedi</a></li>
-        </ul>
+      <ul class="nav-links">
+    <li><a href="${pageContext.request.contextPath}/Home">Home</a></li>
+    <li><a href="#">Menu</a></li>
+    <li><a href="#">Carrello</a></li>
+    
+    <%-- Controllo dinamico della sessione --%>
+    <% if (session.getAttribute("utenteLoggato") == null) { %>
+        <li><a href="${pageContext.request.contextPath}/Login">Login</a></li>
+    <% } else { %>
+        <li><a href="${pageContext.request.contextPath}/Logout" style="color: #ff3838;">Logout (<%= session.getAttribute("utenteLoggato") %>)</a></li>
+    <% } %>
+</ul>
     </nav>
 
     <div class="content">

@@ -82,3 +82,90 @@ h1 {
     border-bottom: 2px solid #ff3838; 
     padding-bottom: 5px;
 }
+    
+    
+    
+    
+    
+    
+    
+ /* --- Modulo di Login --- */
+/* --- Contenitore Principale del Login (Sincronizzato con il JSP) --- */
+.login-page-wrapper {
+    display: flex;
+    justify-content: center;  /* Centra il box in orizzontale */
+    align-items: center;      /* Centra il box in verticale */
+    min-height: calc(100vh - 80px); /* Occupa l'altezza dello schermo togliendo la navbar */
+    padding-top: 80px;        /* Spinge il box sotto la navbar fissa */
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* --- Il Box Rettangolare Scuro --- */
+.login-box {
+    background-color: #121212; /* Sfondo nero solido */
+    padding: 40px;
+    border-radius: 10px;
+    border: 2px solid #ff3838; /* Bordino rosso in stile Tokyo */
+    width: 100%;
+    max-width: 380px;          /* Larghezza massima del rettangolo */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); /* Ombra profonda */
+    text-align: center;
+    position: relative;        /* Mantiene gli elementi interni allineati correttamente */
+}
+
+.login-box h2 {
+    color: yellow;
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+}
+
+/* --- Form e Campi di Input --- */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;         /* Allinea le etichette a sinistra rispetto alla casella */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #444444;
+    background-color: #222222; /* Sfondo grigio scuro interno alle caselle */
+    color: #ffffff;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    border-color: #ff3838;
+    outline: none;
+}
+
+/* --- Pulsante Invia --- */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff3838;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s ease;
+}
+
+.btn-login:hover {
+    background-color: #e02424;
+}
