@@ -8,14 +8,15 @@
     <title>Tokyo Bites - Menu</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
 </head>
-<body class="menu-page"> <nav class="navbar">
+<body class="menu-page"> 
+    <nav class="navbar">
         <div class="nav-logo">
             <a href="${pageContext.request.contextPath}/Home">Tokyo Bites 🍣</a>
         </div>
         <ul class="nav-links">
             <li><a href="${pageContext.request.contextPath}/Home">Home</a></li>
             <li><a href="${pageContext.request.contextPath}/Menu" class="active">Menu</a></li>
-            <li><a href="#">Carrello</a></li>
+            <li><a href="${pageContext.request.contextPath}/Carrello">Carrello</a></li>
             
             <%
                 String utente = null;
@@ -68,9 +69,16 @@
                     <div class="product-info">
                         <h3 class="product-name"><%= p.getNome() %></h3>
                         <p class="product-desc"><%= p.getDescrizione() %></p>
+                        
                         <div class="product-footer">
                             <span class="product-price">€ <%= String.format("%.2f", p.getPrezzo()) %></span>
-                            <button class="btn-add-cart">Aggiungi</button>
+                            
+                            <form action="${pageContext.request.contextPath}/Carrello" method="POST" style="margin: 0;">
+                                <input type="hidden" name="idPiatto" value="<%= p.getId() %>">
+                                <input type="hidden" name="categoriaProvenienza" value="<%= catAttuale %>">
+                                
+                                <button type="submit" class="btn-add-cart">Aggiungi</button>
+                            </form>
                         </div>
                     </div>
                 </div>
