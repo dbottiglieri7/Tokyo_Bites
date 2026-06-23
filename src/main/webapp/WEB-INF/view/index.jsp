@@ -8,6 +8,22 @@
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
 </head>
 <body>
-<h1>Benvenuto su Tokyo Bites!</h1>
+
+    <nav class="navbar">
+        <div class="nav-logo">
+            <a href="${pageContext.request.contextPath}/Home">Tokyo Bites 🍣</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="${pageContext.request.contextPath}/Home" class="active">Home</a></li>
+            <li><a href="#">Menu</a></li>
+            <li><a href="#">Carrello</a></li>
+            <li><a href="#">Accedi</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h1>Benvenuto su Tokyo Bites!</h1>
+    </div>
+
 </body>
 </html>

@@ -1,31 +1,84 @@
 @charset "UTF-8";
 
-
+/* Reset e impostazioni di sfondo della pagina */
 body {
-    /* Diciamo al CSS di usare la nostra immagine e, se non la trova, di usare il nero come ruota di scorta */
     background-image: url('../images/Sushi_Sfondo.jpeg'); 
-    
-    /* Regole fondamentali per renderla perfetta su tutti gli schermi: */
-    background-size: cover;        /* Copre tutto lo schermo senza deformarsi */
-    background-position: center;   /* Centra l'immagine sia in alto/basso che a destra/sinistra */
-    background-attachment: fixed;  /* L'immagine resta ferma sullo sfondo mentre l'utente scatta verso il basso */
-    background-repeat: no-repeat;  /* Impedisce all'immagine di ripetersi come un mosaico se lo schermo è grande */
-
+    background-size: cover;        /* Adatta l'immagine allo schermo senza distorcerla */
+    background-position: center;   
+    background-attachment: fixed;  /* Mantiene lo sfondo bloccato durante lo scrolling */
+    background-repeat: no-repeat;  
     color: #ffffff;            
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    
-    /* Questa riga serve a garantire che la pagina sia alta almeno quanto tutto lo schermo del browser */
-    min-height: 100vh; 
+    min-height: 100vh;             /* Altezza minima pari a tutto lo schermo del browser */
 }
 
 h1 {
-    color: #ff3838;            
+    color: yellow;            
     text-align: center;
     margin-top: 50px;
-    font-size: 3rem; /* Lo facciamo un po' più grande e importante */
-    
-    /* Crea un'ombra nera intorno alle lettere per farle risaltare su qualsiasi sfondo */
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); 
+    font-size: 3rem; 
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); /* Ombra per migliorare la leggibilità sullo sfondo */
+}
+
+/* Spaziamento per il contenuto principale della pagina */
+.content {
+    padding-top: 100px;            /* Evita che il testo finisca sotto la navbar fissa */
+}
+
+/* Stile della barra di navigazione principale */
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Separa il logo a sinistra dai link a destra */
+    align-items: center;
+    background-color: rgba(18, 18, 18, 0.85); /* Sfondo scuro con leggera trasparenza */
+    padding: 15px 30px;
+    position: fixed;               /* Blocca la barra in alto durante lo scroll */
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;        /* Include il padding nel calcolo della larghezza totale */
+    z-index: 1000;                 /* Garantisce che la barra rimanga sopra gli altri elementi */
+    border-bottom: 2px solid #ff3838; 
+}
+
+.nav-logo a {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-decoration: none; 
+    letter-spacing: 1px;
+}
+
+/* Gestione dei link della navbar */
+.nav-links {
+    list-style: none;              /* Rimuove i punti elenco standard */
+    display: flex;                 /* Dispone i link in linea orizzontale */
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    margin-left: 25px;             /* Spazio tra un link e l'altro */
+}
+
+.nav-links a {
+    color: #cccccc;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: color 0.3s ease;   /* Animazione fluida per il cambio colore al passaggio del mouse */
+}
+
+/* Stati interattivi dei link */
+.nav-links a:hover {
+    color: #ff3838; 
+}
+
+/* Evidenzia il link della pagina corrente */
+.nav-links a.active {
+    color: #ff3838;
+    border-bottom: 2px solid #ff3838; 
+    padding-bottom: 5px;
 }
