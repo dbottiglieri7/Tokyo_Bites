@@ -41,7 +41,7 @@ public class MenuServlet extends HttpServlet {
         } else if (categoriaSelezionata.equalsIgnoreCase("Antipasti")) {
             listaProdotti.add(new Piatto(7, "Edamame", "Fagiolini di soia saltati con sale a scaglie", 4.00, "Antipasti", "edamame.jpeg"));
             listaProdotti.add(new Piatto(8, "Gyoza di Carne", "Ravioli giapponesi di carne alla piastra (5 pz)", 5.50, "Antipasti", "gyoza.jpeg"));
-            listaProdotti.add(new Piatto(9, "Nuvole di Drago", "Chip croccanti al gusto di gamberetto", 3.00, "Antipasti", "nuvole.jpeg"));
+            listaProdotti.add(new Piatto(9, "Nuvole di Drago", "Chips croccanti al gusto di gamberetto", 3.00, "Antipasti", "nuvole.jpeg"));
             
         } else if (categoriaSelezionata.equalsIgnoreCase("Noodles")) {
             listaProdotti.add(new Piatto(10, "Yaki Udon", "Spessi noodles di grano tenero saltati con verdure e pollo", 9.50, "Noodles", "yaki_udon.jpeg"));

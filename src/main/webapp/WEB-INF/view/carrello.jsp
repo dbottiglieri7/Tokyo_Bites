@@ -126,9 +126,11 @@
                     </button>
                 </form>
 
-                <button class="btn-add-cart" style="padding: 12px 30px; font-size: 1.1rem; border-radius: 30px;">
-                    Conferma Ordine 🚀
-                </button>
+               <form action="${pageContext.request.contextPath}/ConfermaOrdine" method="GET" style="margin: 0;">
+                    <button type="submit" class="btn-add-cart" style="padding: 12px 30px; font-size: 1.1rem; border-radius: 30px;">
+                        Conferma Ordine 
+                    </button>
+                </form>
             </div>
         <% 
             } 

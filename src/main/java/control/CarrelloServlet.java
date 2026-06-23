@@ -88,7 +88,7 @@ public class CarrelloServlet extends HttpServlet {
         // Antipasti
         catalogo.add(new Piatto(7, "Edamame", "Fagiolini di soia saltati con sale a scaglie", 4.00, "Antipasti", "edamame.png"));
         catalogo.add(new Piatto(8, "Gyoza di Carne", "Ravioli giapponesi di carne alla piastra (5 pz)", 5.50, "Antipasti", "gyoza.png"));
-        catalogo.add(new Piatto(9, "Nuvole di Drago", "Chip croccanti al gusto di gamberetto", 3.00, "Antipasti", "nuvole.png"));
+        catalogo.add(new Piatto(9, "Nuvole di Drago", "Chips croccanti al gusto di gamberetto", 3.00, "Antipasti", "nuvole.png"));
         // Noodles
         catalogo.add(new Piatto(10, "Yaki Udon", "Spessi noodles di grano tenero saltati con verdure e pollo", 9.50, "Noodles", "yaki_udon.png"));
         catalogo.add(new Piatto(11, "Ramen di Maiale", "Noodles in brodo di maiale, uovo marinato, alghe e cipollotto", 12.00, "Noodles", "ramen.png"));
