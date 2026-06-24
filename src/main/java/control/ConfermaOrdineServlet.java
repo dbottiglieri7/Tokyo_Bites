@@ -42,7 +42,7 @@ public class ConfermaOrdineServlet extends HttpServlet {
             return;
         }
 
-        //  Recuperiamo i singoli parametri di spedizione richiesti dall' OrdineDAO
+        // Recuperiamo i singoli parametri di spedizione richiesti dall' OrdineDAO
         String indirizzo = request.getParameter("indirizzo");
         String citta = request.getParameter("citta");
         String cap = request.getParameter("cap");
@@ -52,18 +52,18 @@ public class ConfermaOrdineServlet extends HttpServlet {
         if (citta == null) citta = "Non specificato";
         if (cap == null) cap = "00000";
 
-        int idUtente = (utenteCompleto != null) ? utenteCompleto.getId() : 1;
+        // Estraiamo l'email reale dall'utente in sessione, con un fallback di sicurezza se fosse nullo
+        String emailUtente = (utenteCompleto != null) ? utenteCompleto.getEmail() : "cliente@test.com";
         double totale = carrello.getPrezzoTotale();
 
-        //Istanziamo l'oggetto Ordine inserendo anche la data corrente
+        // Istanziamo l'oggetto Ordine inserendo anche la data corrente
         Ordine nuovoOrdine = new Ordine();
-        nuovoOrdine.setIdUtente(idUtente);
         nuovoOrdine.setTotale(totale);
         nuovoOrdine.setDataOrdine(new Date()); 
-        nuovoOrdine.setStato("IN_PREPARAZIONE");
+        nuovoOrdine.setStato("In lavorazione");
 
-        //Chiamiamo il DAO passando tutti e 4 i parametri richiesti dalla firma del metodo
-        boolean ordineSalvato = ordineDAO.salvaOrdine(nuovoOrdine, indirizzo, citta, cap);
+        // FIX RIGA 66: Chiamiamo il DAO passando l'email come secondo parametro obbligatorio (5 parametri totali)
+        boolean ordineSalvato = ordineDAO.salvaOrdine(nuovoOrdine, emailUtente, indirizzo, citta, cap);
 
         response.setContentType("text/html");
         response.getWriter().println("<body style='background:#111; color:white; text-align:center; padding-top:100px; font-family:sans-serif;'>");

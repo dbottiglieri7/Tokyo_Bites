@@ -8,17 +8,17 @@ import utils.ConnessioneDB;
 
 public class OrdineDAO {
 
-    // Metodo allineato perfettamente al tuo database (8 colonne)
-    public boolean salvaOrdine(Ordine o, String indirizzo, String citta, String cap) {
-        String query = "INSERT INTO ordine (id_utente, totale, data_ordine, stato, indirizzo, citta, cap) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    // Metodo allineato perfettamente al tuo database (Sostituito idUtente con utenteEmail per via del vincolo NOT NULL)
+    public boolean salvaOrdine(Ordine o, String utenteEmail, String indirizzo, String citta, String cap) {
+        String query = "INSERT INTO ordine (utente_email, totale, data_ordine, stato, indirizzo, citta, cap) VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = ConnessioneDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             
-            ps.setInt(1, o.getIdUtente());
+            ps.setString(1, utenteEmail); // Passiamo l'email che la tabella richiede obbligatoriamente
             ps.setDouble(2, o.getTotale());
             ps.setTimestamp(3, new java.sql.Timestamp(o.getDataOrdine().getTime()));
-            ps.setString(4, o.getStato() != null ? o.getStato() : "IN_PREPARAZIONE");
+            ps.setString(4, o.getStato() != null ? o.getStato() : "In lavorazione");
             ps.setString(5, indirizzo);
             ps.setString(6, citta);
             ps.setString(7, cap);
@@ -35,12 +35,12 @@ public class OrdineDAO {
     public static void main(String[] args) {
         OrdineDAO dao = new OrdineDAO();
         
-        // Simuliamo l'ordine (id_utente = 1, totale = 42.50)
-        Ordine nuovoOrdine = new Ordine(0, 1, 42.50, new java.util.Date(), "IN_PREPARAZIONE");
+        // Simuliamo l'ordine (totale = 42.50)
+        Ordine nuovoOrdine = new Ordine(0, 1, 42.50, new java.util.Date(), "In lavorazione");
         
         System.out.println("--- Test Salvataggio Ordine Reale ---");
-        // Passiamo solo i dati richiesti dal tuo DB
-        boolean successo = dao.salvaOrdine(nuovoOrdine, "Via Roma 10", "Napoli", "80100");
+        // Passiamo un'email di test esistente nel tuo DB (es. giovanniverdi@gmail.com) insieme ai dati di spedizione
+        boolean successo = dao.salvaOrdine(nuovoOrdine, "giovanniverdi@gmail.com", "Via Roma 10", "Napoli", "80100");
         
         if (successo) {
             System.out.println(" Ordine salvato con successo su MySQL!");
