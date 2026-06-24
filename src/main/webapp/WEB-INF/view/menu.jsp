@@ -9,25 +9,32 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
 </head>
 <body class="menu-page"> 
-    <nav class="navbar">
+    <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
         <div class="nav-logo">
-            <a href="${pageContext.request.contextPath}/Home">Tokyo Bites 🍣</a>
+            <a href="${pageContext.request.contextPath}/Home" style="color: white; text-decoration: none; font-weight: bold; font-size: 1.5em;">Tokyo Bites 🍣</a>
         </div>
-        <ul class="nav-links">
-            <li><a href="${pageContext.request.contextPath}/Home">Home</a></li>
-            <li><a href="${pageContext.request.contextPath}/Menu" class="active">Menu</a></li>
-            <li><a href="${pageContext.request.contextPath}/Carrello">Carrello</a></li>
+        
+        <ul class="nav-links" style="list-style: none; display: flex; align-items: center; margin: 0; padding: 0;">
+            <li><a href="${pageContext.request.contextPath}/Home" style="color: white; text-decoration: none; margin-left: 20px;">Home 🏠</a></li>
+            <li><a href="${pageContext.request.contextPath}/Menu" style="color: #ff3838; text-decoration: none; margin-left: 20px; font-weight: bold;">Menu 🍣</a></li>
+            <li><a href="${pageContext.request.contextPath}/Carrello" style="color: white; text-decoration: none; margin-left: 20px;">Carrello 🛒</a></li>
             
             <%
                 String utente = null;
                 if (session != null) {
                     utente = (String) session.getAttribute("utenteLoggato");
                 }
-                if (utente == null) {
+                
+                // Se l'utente è loggato, mostriamo lo Storico Ordini e il tasto Logout
+                if (utente != null) {
             %>
-                <li><a href="${pageContext.request.contextPath}/Login">Login</a></li>
-            <% } else { %>
-                <li><a href="${pageContext.request.contextPath}/Logout" style="color: #ff3838; font-weight: bold;">Logout (<%= utente %>)</a></li>
+                <li><a href="${pageContext.request.contextPath}/StoricoOrdini" style="color: yellow; text-decoration: none; margin-left: 20px; font-weight: bold;">Miei Ordini 📜</a></li>
+                <li><a href="${pageContext.request.contextPath}/Logout" style="color: #ff3838; text-decoration: none; margin-left: 20px; font-weight: bold;">Logout (<%= utente %>) 👤</a></li>
+            <% 
+                } else { 
+                // Se NON è loggato, mostra solo il link per fare il Login
+            %>
+                <li><a href="${pageContext.request.contextPath}/Login" style="color: white; text-decoration: none; margin-left: 20px;">Login 👤</a></li>
             <% } %>
         </ul>
     </nav>

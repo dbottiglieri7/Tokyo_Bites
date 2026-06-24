@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import model.Carrello;
 import model.Piatto;
@@ -14,6 +16,7 @@ import utils.ConnessioneDB;
 
 public class OrdineDAO {
 
+    // Salva l'ordine raggruppando i duplicati e inserendo le righe nel DB in modo transazionale
     public boolean salvaOrdineCompleto(Ordine o, String utenteEmail, String indirizzo, String citta, String cap, Carrello carrello) {
         String queryOrdine = "INSERT INTO ordine (utente_email, totale, data_ordine, stato, indirizzo, citta, cap) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String queryRiga = "INSERT INTO riga_ordine (id_ordine, id_prodotto, quantita, prezzo_acquisto) VALUES (?, ?, ?, ?)";
@@ -51,9 +54,7 @@ public class OrdineDAO {
             }
             
             // 2. RAGGRUPPAMENTO DEI PRODOTTI DUPLICATI
-            // Mappa per associare l'ID del Piatto all'oggetto Piatto stesso (per recuperare il prezzo)
             Map<Integer, Piatto> piattiUnici = new HashMap<>();
-            // Mappa per sommare le quantità per ciascun ID prodotto
             Map<Integer, Integer> quantitaProdotti = new HashMap<>();
             
             for (Piatto piatto : carrello.getElementi()) {
@@ -72,8 +73,8 @@ public class OrdineDAO {
                 
                 psRiga.setInt(1, idOrdineGenerato);
                 psRiga.setInt(2, idPiatto);
-                psRiga.setInt(3, quantitaTotale); // Inserisce la quantità cumulata (es. 3 invece di tre righe da 1)
-                psRiga.setDouble(4, piatto.getPrezzo()); // Prezzo unitario di acquisto congelato
+                psRiga.setInt(3, quantitaTotale); 
+                psRiga.setDouble(4, piatto.getPrezzo()); 
                 
                 psRiga.addBatch();
             }
@@ -97,5 +98,33 @@ public class OrdineDAO {
             try { if (psOrdine != null) psOrdine.close(); } catch (SQLException e) {}
             try { if (conn != null) conn.close(); } catch (SQLException e) {}
         }
+    }
+
+    // NUOVO METODO: Recupera tutti gli ordini di un determinato utente per lo storico ordini
+    public List<Ordine> getOrdiniByUtente(String utenteEmail) {
+        List<Ordine> lista = new ArrayList<>();
+        String query = "SELECT * FROM ordine WHERE utente_email = ? ORDER BY data_ordine DESC";
+        
+        try (Connection conn = ConnessioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            
+            ps.setString(1, utenteEmail);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Ordine ord = new Ordine();
+                    ord.setId(rs.getInt("id")); 
+                    ord.setTotale(rs.getDouble("totale"));
+                    ord.setDataOrdine(rs.getTimestamp("data_ordine"));
+                    ord.setStato(rs.getString("stato"));
+                    ord.setIndirizzo(rs.getString("indirizzo"));
+                    ord.setCitta(rs.getString("citta"));
+                    ord.setCap(rs.getString("cap"));
+                    lista.add(ord);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Errore in getOrdiniByUtente: " + e.getMessage());
+        }
+        return lista;
     }
 }

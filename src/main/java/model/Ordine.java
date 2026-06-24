@@ -8,20 +8,26 @@ public class Ordine {
     private double totale;     // Prezzo totale pagato
     private Date dataOrdine;   // Quando è stato fatto
     private String stato;      // 'IN_PREPARAZIONE', 'SPEDITO', 'CONSEGNATO'
+    private String indirizzo;  // NUOVO
+    private String citta;      // NUOVO
+    private String cap;        // NUOVO
 
     // Costruttore vuoto
     public Ordine() {}
 
-    // Costruttore completo
-    public Ordine(int id, int idUtente, double totale, Date dataOrdine, String stato) {
+    // Costruttore completo aggiornato
+    public Ordine(int id, int idUtente, double totale, Date dataOrdine, String stato, String indirizzo, String citta, String cap) {
         this.id = id;
         this.idUtente = idUtente;
         this.totale = totale;
         this.dataOrdine = dataOrdine;
         this.stato = stato;
+        this.indirizzo = indirizzo;
+        this.citta = citta;
+        this.cap = cap;
     }
 
-    // Getter e Setter
+    // Getter e Setter esistenti
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -36,4 +42,14 @@ public class Ordine {
 
     public String getStato() { return stato; }
     public void setStato(String stato) { this.stato = stato; }
+
+    // NUOVI Getter e Setter per l'indirizzo di spedizione
+    public String getIndirizzo() { return indirizzo; }
+    public void setIndirizzo(String indirizzo) { this.indirizzo = indirizzo; }
+
+    public String getCitta() { return citta; }
+    public void setCitta(String citta) { this.citta = citta; }
+
+    public String getCap() { return cap; }
+    public void setCap(String cap) { this.cap = cap; }
 }

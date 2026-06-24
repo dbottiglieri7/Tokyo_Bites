@@ -11,25 +11,28 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
 </head>
 <body class="menu-page"> 
-    <nav class="navbar">
+
+    <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
         <div class="nav-logo">
-            <a href="${pageContext.request.contextPath}/Home">Tokyo Bites 🍣</a>
+            <a href="${pageContext.request.contextPath}/Home" style="color: white; text-decoration: none; font-weight: bold; font-size: 1.5em;">Tokyo Bites 🍣</a>
         </div>
-        <ul class="nav-links">
-            <li><a href="${pageContext.request.contextPath}/Home">Home</a></li>
-            <li><a href="${pageContext.request.contextPath}/Menu">Menu</a></li>
-            <li><a href="${pageContext.request.contextPath}/Carrello" class="active">Carrello</a></li>
+        
+        <ul class="nav-links" style="list-style: none; display: flex; align-items: center; margin: 0; padding: 0;">
+            <li><a href="${pageContext.request.contextPath}/Home" style="color: white; text-decoration: none; margin-left: 20px;">Home 🏠</a></li>
+            <li><a href="${pageContext.request.contextPath}/Menu" style="color: white; text-decoration: none; margin-left: 20px;">Menu 🍣</a></li>
+            <li><a href="${pageContext.request.contextPath}/Carrello" style="color: #ff3838; text-decoration: none; margin-left: 20px; font-weight: bold;">Carrello 🛒</a></li>
             
             <%
                 String utente = null;
                 if (session != null) {
                     utente = (String) session.getAttribute("utenteLoggato");
                 }
-                if (utente == null) {
+                if (utente != null) {
             %>
-                <li><a href="${pageContext.request.contextPath}/Login">Login</a></li>
+                <li><a href="${pageContext.request.contextPath}/StoricoOrdini" style="color: yellow; text-decoration: none; margin-left: 20px; font-weight: bold;">Miei Ordini 📜</a></li>
+                <li><a href="${pageContext.request.contextPath}/Logout" style="color: #ff3838; text-decoration: none; margin-left: 20px; font-weight: bold;">Logout (<%= utente %>) 👤</a></li>
             <% } else { %>
-                <li><a href="${pageContext.request.contextPath}/Logout" style="color: #ff3838; font-weight: bold;">Logout (<%= utente %>)</a></li>
+                <li><a href="${pageContext.request.contextPath}/Login" style="color: white; text-decoration: none; margin-left: 20px;">Login 👤</a></li>
             <% } %>
         </ul>
     </nav>
@@ -59,16 +62,12 @@
                 </thead>
                 <tbody>
                     <% 
-                        // Creiamo una lista di ID già visitati per non duplicare le righe nella tabella
                         List<Integer> idVisitati = new ArrayList<>();
-                        
                         for (Piatto p : carrello.getElementi()) { 
-                            // Se abbiamo già stampato questo piatto, lo saltiamo
                             if (idVisitati.contains(p.getId())) {
                                 continue;
                             }
                             
-                            // Contiamo quante volte questo specifico piatto compare nel carrello
                             int quantita = 0;
                             for (Piatto rip : carrello.getElementi()) {
                                 if (rip.getId() == p.getId()) {
@@ -76,10 +75,7 @@
                                 }
                             }
                             
-                            // Calcoliamo il prezzo parziale (prezzo * quantita)
                             double prezzoParziale = p.getPrezzo() * quantita;
-                            
-                            // Aggiungiamo l'ID alla lista di quelli già mostrati
                             idVisitati.add(p.getId());
                     %>
                         <tr style="border-bottom: 1px solid #333;">

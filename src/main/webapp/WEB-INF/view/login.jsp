@@ -4,35 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <title>Tokyo Bites - Login & Registrazione</title>
-   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
 </head>
 <body>
 
-    <nav class="navbar">
+    <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
         <div class="nav-logo">
-            <a href="${pageContext.request.contextPath}/Home">Tokyo Bites 🍣</a>
+            <a href="${pageContext.request.contextPath}/Home" style="color: white; text-decoration: none; font-weight: bold; font-size: 1.5em;">Tokyo Bites 🍣</a>
         </div>
-        <ul class="nav-links">
-            <li><a href="${pageContext.request.contextPath}/Home">Home</a></li>
-            <li><a href="${pageContext.request.contextPath}/Menu">Menu</a></li>
-            <li><a href="${pageContext.request.contextPath}/Carrello">Carrello</a></li>
+        
+        <ul class="nav-links" style="list-style: none; display: flex; align-items: center; margin: 0; padding: 0;">
+            <li><a href="${pageContext.request.contextPath}/Home" style="color: white; text-decoration: none; margin-left: 20px;">Home 🏠</a></li>
+            <li><a href="${pageContext.request.contextPath}/Menu" style="color: white; text-decoration: none; margin-left: 20px;">Menu 🍣</a></li>
+            <li><a href="${pageContext.request.contextPath}/Carrello" style="color: white; text-decoration: none; margin-left: 20px;">Carrello 🛒</a></li>
             
-            <% if (session.getAttribute("utenteLoggato") == null) { %>
-                <li><a href="${pageContext.request.contextPath}/Login" class="active">Login</a></li>
+            <% 
+                String utente = (String) session.getAttribute("utenteLoggato");
+                if (utente != null) { 
+            %>
+                <li><a href="${pageContext.request.contextPath}/StoricoOrdini" style="color: yellow; text-decoration: none; margin-left: 20px; font-weight: bold;">Miei Ordini 📜</a></li>
+                <li><a href="${pageContext.request.contextPath}/Logout" style="color: #ff3838; text-decoration: none; margin-left: 20px; font-weight: bold;">Logout (<%= utente %>) 👤</a></li>
             <% } else { %>
-                <li><a href="${pageContext.request.contextPath}/Logout" style="color: #ff3838;">Logout (<%= session.getAttribute("utenteLoggato") %>)</a></li>
+                <li><a href="${pageContext.request.contextPath}/Login" style="color: #ff3838; text-decoration: none; margin-left: 20px; font-weight: bold;">Login 👤</a></li>
             <% } %>
         </ul>
     </nav>
 
     <div class="login-page-wrapper">
     
-        <div class="auth-container" style="display: flex; gap: 40px; justify-content: center; margin-top: 20px;">
+        <div class="auth-container" style="display: flex; gap: 40px; justify-content: center; margin-top: 40px;">
             
             <div class="login-box">
                 <h2>Accedi al tuo Account</h2>
                 
-                <%-- L'errore del login adesso compare qui dentro, perfettamente formattato --%>
                 <% if (request.getAttribute("erroreLogin") != null) { %>
                     <div class="messaggio-errore">
                         <%= request.getAttribute("erroreLogin") %>
@@ -57,7 +61,6 @@
             <div class="login-box">
                 <h2>Crea un nuovo Account</h2>
                 
-                <%-- Gli errori o successi della registrazione compaiono qui dentro --%>
                 <% if (request.getAttribute("messaggio") != null) { %>
                     <div class="messaggio-errore" style="background-color: rgba(46, 204, 113, 0.15); color: #2ecc71; border-color: #2ecc71;">
                         <%= request.getAttribute("messaggio") %>
