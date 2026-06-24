@@ -25,14 +25,12 @@
                     utente = (String) session.getAttribute("utenteLoggato");
                 }
                 
-                // Se l'utente è loggato, mostriamo lo Storico Ordini e il tasto Logout
                 if (utente != null) {
             %>
                 <li><a href="${pageContext.request.contextPath}/StoricoOrdini" style="color: yellow; text-decoration: none; margin-left: 20px; font-weight: bold;">Miei Ordini 📜</a></li>
                 <li><a href="${pageContext.request.contextPath}/Logout" style="color: #ff3838; text-decoration: none; margin-left: 20px; font-weight: bold;">Logout (<%= utente %>) 👤</a></li>
             <% 
                 } else { 
-                // Se NON è loggato, mostra solo il link per fare il Login
             %>
                 <li><a href="${pageContext.request.contextPath}/Login" style="color: white; text-decoration: none; margin-left: 20px;">Login 👤</a></li>
             <% } %>
@@ -44,27 +42,36 @@
         
         <%
             String catAttuale = (String) request.getAttribute("categoriaAttuale");
-            if (catAttuale == null) catAttuale = "Bevande";
+            if (catAttuale == null) catAttuale = "Sushi e Sashimi";
         %>
         
         <div class="categories-tabs">
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Bevande" 
-               class="tab <%= catAttuale.equalsIgnoreCase("Bevande") ? "active" : "" %>">Bevande</a>
-            
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Sushi e Sashimi" 
+               class="tab <%= catAttuale.equalsIgnoreCase("Sushi e Sashimi") ? "active" : "" %>">Sushi & Sashimi</a>
+               
             <a href="${pageContext.request.contextPath}/Menu?categoria=SushiRoll" 
                class="tab <%= catAttuale.equalsIgnoreCase("SushiRoll") ? "active" : "" %>">Sushi Roll</a>
             
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Antipasti" 
-               class="tab <%= catAttuale.equalsIgnoreCase("Antipasti") ? "active" : "" %>">Antipasti</a>
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Ravioli e Sfizi" 
+               class="tab <%= catAttuale.equalsIgnoreCase("Ravioli e Sfizi") ? "active" : "" %>">Ravioli & Sfizi</a>
+            
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Primi Piatti" 
+               class="tab <%= catAttuale.equalsIgnoreCase("Primi Piatti") ? "active" : "" %>">Primi Piatti</a>
                
             <a href="${pageContext.request.contextPath}/Menu?categoria=Noodles" 
                class="tab <%= catAttuale.equalsIgnoreCase("Noodles") ? "active" : "" %>">Noodles</a>
+               
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Antipasti" 
+               class="tab <%= catAttuale.equalsIgnoreCase("Antipasti") ? "active" : "" %>">Antipasti</a>
+               
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Bevande" 
+               class="tab <%= catAttuale.equalsIgnoreCase("Bevande") ? "active" : "" %>">Bevande</a>
         </div>
 
         <div class="products-grid">
             <%
                 List<Piatto> prodotti = (List<Piatto>) request.getAttribute("prodottiMenu");
-                if (prodotti != null) {
+                if (prodotti != null && !prodotti.isEmpty()) {
                     for (Piatto p : prodotti) {
             %>
                 <div class="product-card">
@@ -89,10 +96,27 @@
                 </div>
             <% 
                     }
-                } 
+                } else {
             %>
+                <div style="color: white; text-align: center; grid-column: 1 / -1; padding: 40px;">
+                    <p>Nessun piatto trovato in questa categoria.</p>
+                </div>
+            <% } %>
         </div>
     </div>
 
+    <script>
+        window.addEventListener('beforeunload', function() {
+            localStorage.setItem('scrollPositionMenu', window.scrollY);
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPosition = localStorage.getItem('scrollPositionMenu');
+            if (savedPosition) {
+                window.scrollTo(0, parseInt(savedPosition, 10));
+                localStorage.removeItem('scrollPositionMenu');
+            }
+        });
+    </script>
 </body>
 </html>

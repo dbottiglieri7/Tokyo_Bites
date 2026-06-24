@@ -21,14 +21,21 @@ public class MenuServlet extends HttpServlet {
         // 1. Lettura della categoria dall'URL
         String categoriaSelezionata = request.getParameter("categoria");
         
-        if (categoriaSelezionata == null || categoriaSelezionata.isEmpty()) {
-            categoriaSelezionata = "Bevande";
+        // 2. CORREZIONE LOGICA: Se è null, vuota o non valida, mostriamo una categoria ricca di default
+        if (categoriaSelezionata == null || categoriaSelezionata.trim().isEmpty()) {
+            categoriaSelezionata = "Sushi e Sashimi";
+        } else {
+            // Eliminiamo spazi bianchi superflui all'inizio e alla fine per sicurezza
+            categoriaSelezionata = categoriaSelezionata.trim();
         }
 
-        // 2. Recuperiamo i piatti dal database 
+        // 3. Recuperiamo i piatti dal database filtrati per la nuova categoria
         List<Piatto> listaProdotti = piattoDAO.getPiattiByCategoria(categoriaSelezionata);
         
-        // 3. Invio dei dati alla pagina JSP
+        // Log di debug in console di Eclipse/Tomcat per verificare cosa sta succedendo in tempo reale
+        System.out.println("[MenuServlet] Richiesta categoria: '" + categoriaSelezionata + "' -> Trovati " + listaProdotti.size() + " prodotti.");
+        
+        // 4. Invio dei dati alla pagina JSP
         request.setAttribute("prodottiMenu", listaProdotti);
         request.setAttribute("categoriaAttuale", categoriaSelezionata);
 
