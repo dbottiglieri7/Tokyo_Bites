@@ -61,9 +61,8 @@ public class ConfermaOrdineServlet extends HttpServlet {
         nuovoOrdine.setTotale(totale);
         nuovoOrdine.setDataOrdine(new Date()); 
         nuovoOrdine.setStato("In lavorazione");
-
-        // FIX RIGA 66: Chiamiamo il DAO passando l'email come secondo parametro obbligatorio (5 parametri totali)
-        boolean ordineSalvato = ordineDAO.salvaOrdine(nuovoOrdine, emailUtente, indirizzo, citta, cap);
+   
+        boolean ordineSalvato = ordineDAO.salvaOrdineCompleto(nuovoOrdine, emailUtente, indirizzo, citta, cap, carrello);
 
         response.setContentType("text/html");
         response.getWriter().println("<body style='background:#111; color:white; text-align:center; padding-top:100px; font-family:sans-serif;'>");
