@@ -23,7 +23,7 @@ public class Home extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	// Indirizza eventuali richieste in POST (es. rimbalzi da form o ricariche)
+    	// Indirizza eventuali richieste in POST
     	doGet(request, response);
     	// allo stesso metodo doGet, garantendo che la Home mostri sempre la index.jsp.
     }

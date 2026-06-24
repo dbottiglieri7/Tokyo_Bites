@@ -36,7 +36,6 @@
         <h1 class="menu-title">Il Nostro Menu: <%= request.getAttribute("categoriaAttuale") %></h1>
         
         <%
-            // Recuperiamo la categoria attuale per premere il bottone corretto
             String catAttuale = (String) request.getAttribute("categoriaAttuale");
             if (catAttuale == null) catAttuale = "Bevande";
         %>
@@ -57,7 +56,6 @@
 
         <div class="products-grid">
             <%
-                // Recuperiamo la lista passata dalla MenuServlet
                 List<Piatto> prodotti = (List<Piatto>) request.getAttribute("prodottiMenu");
                 if (prodotti != null) {
                     for (Piatto p : prodotti) {

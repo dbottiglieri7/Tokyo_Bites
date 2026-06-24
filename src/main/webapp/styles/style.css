@@ -1,17 +1,32 @@
 @charset "UTF-8";
 
-/* Reset e impostazioni di sfondo della pagina */
+/* --- Messaggio di Errore e Successo (Aggiornato per Tema Scuro) --- */
+.messaggio-errore {
+    background-color: rgba(255, 56, 56, 0.15); /* Sfondo rosso scuro semi-trasparente */
+    color: #ff4d4d;                            /* Testo rosso acceso ben visibile sul nero */
+    border: 1px solid #ff3838;                 /* Bordo rosso coordinato con il brand */
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* --- Reset e impostazioni di sfondo della pagina --- */
 body {
     background-image: url('../images/Sushi_Sfondo.jpeg'); 
-    background-size: cover;        /* Adatta l'immagine allo schermo senza distorcerla */
+    background-size: cover;
     background-position: center;   
-    background-attachment: fixed;  /* Mantiene lo sfondo bloccato durante lo scrolling */
+    background-attachment: fixed;
     background-repeat: no-repeat;  
     color: #ffffff;            
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    min-height: 100vh;             /* Altezza minima pari a tutto lo schermo del browser */
+    min-height: 100vh;
 }
 
 h1 {
@@ -19,27 +34,26 @@ h1 {
     text-align: center;
     margin-top: 50px;
     font-size: 3rem; 
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); /* Ombra per migliorare la leggibilità sullo sfondo */
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
 }
 
-/* Spaziamento per il contenuto principale della pagina */
 .content {
-    padding-top: 100px;            /* Evita che il testo finisca sotto la navbar fissa */
+    padding-top: 100px;
 }
 
 /* Stile della barra di navigazione principale */
 .navbar {
     display: flex;
-    justify-content: space-between; /* Separa il logo a sinistra dai link a destra */
+    justify-content: space-between;
     align-items: center;
-    background-color: rgba(18, 18, 18, 0.85); /* Sfondo scuro con leggera trasparenza */
+    background-color: rgba(18, 18, 18, 0.85);
     padding: 15px 30px;
-    position: fixed;               /* Blocca la barra in alto durante lo scroll */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    box-sizing: border-box;        /* Include il padding nel calcolo della larghezza totale */
-    z-index: 1000;                 /* Garantisce che la barra rimanga sopra gli altri elementi */
+    box-sizing: border-box;
+    z-index: 1000;
     border-bottom: 2px solid #ff3838; 
 }
 
@@ -51,16 +65,15 @@ h1 {
     letter-spacing: 1px;
 }
 
-/* Gestione dei link della navbar */
 .nav-links {
-    list-style: none;              /* Rimuove i punti elenco standard */
-    display: flex;                 /* Dispone i link in linea orizzontale */
+    list-style: none;
+    display: flex;
     margin: 0;
     padding: 0;
 }
 
 .nav-links li {
-    margin-left: 25px;             /* Spazio tra un link e l'altro */
+    margin-left: 25px;
 }
 
 .nav-links a {
@@ -68,15 +81,13 @@ h1 {
     text-decoration: none;
     font-size: 1.1rem;
     font-weight: 500;
-    transition: color 0.3s ease;   /* Animazione fluida per il cambio colore al passaggio del mouse */
+    transition: color 0.3s ease;
 }
 
-/* Stati interattivi dei link */
 .nav-links a:hover {
     color: #ff3838; 
 }
 
-/* Evidenzia il link della pagina corrente */
 .nav-links a.active {
     color: #ff3838;
     border-bottom: 2px solid #ff3838; 
@@ -162,17 +173,15 @@ h1 {
 
 /* --- INTEGRAZIONE SFONDO E STRUTTURA MENU --- */
 
-/* Forza lo sfondo scuro uniforme ed elimina l'immagine gigante della home */
 body.menu-page {
     background-image: none !important;
     background: #0b0b0b !important; 
     background-color: #0b0b0b !important;
 }
 
-/* Contenitore del Menu */
 .menu-container {
     max-width: 1200px;
-    margin: 120px auto 40px auto; /* Aumentato il margine superiore per non andare sotto la navbar fissa */
+    margin: 120px auto 40px auto;
     padding: 30px;
     background: #141414; 
     border-radius: 16px;
@@ -187,7 +196,6 @@ body.menu-page {
     margin-bottom: 10px;
 }
 
-/* --- STILE TABS CATEGORIE --- */
 .categories-tabs {
     display: flex;
     justify-content: center;
@@ -219,7 +227,6 @@ body.menu-page {
     transform: translateY(-2px);
 }
 
-/* --- STRUTTURA A GRIGLIA ED ELEMENTI DEL PRODOTTO (Mancavano qui!) --- */
 .products-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
@@ -236,7 +243,6 @@ body.menu-page {
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-/* Blocco di contenimento dell'immagine */
 .product-image-box {
     width: 100% !important;
     height: 200px !important; 
@@ -249,7 +255,6 @@ body.menu-page {
     box-sizing: border-box;
 }
 
-/* Regolazione millimetrica dell'immagine del prodotto */
 .product-img {
     max-height: 100% !important;
     max-width: 100% !important;
