@@ -100,7 +100,7 @@ public class OrdineDAO {
         }
     }
 
-    // NUOVO METODO: Recupera tutti gli ordini di un determinato utente per lo storico ordini
+    // Recupera tutti gli ordini di un determinato utente per lo storico ordini
     public List<Ordine> getOrdiniByUtente(String utenteEmail) {
         List<Ordine> lista = new ArrayList<>();
         String query = "SELECT * FROM ordine WHERE utente_email = ? ORDER BY data_ordine DESC";
@@ -126,5 +126,112 @@ public class OrdineDAO {
             System.err.println("❌ Errore in getOrdiniByUtente: " + e.getMessage());
         }
         return lista;
+    }
+
+    // ==========================================
+    // METODI AGGIUNTI PER L'AMMINISTRATORE
+    // ==========================================
+
+    // 1. Recupera tutti gli ordini del sistema
+    public List<Ordine> doRetrieveAllOrdini() throws SQLException {
+        List<Ordine> lista = new ArrayList<>();
+        String query = "SELECT * FROM ordine ORDER BY data_ordine DESC";
+        
+        try (Connection conn = ConnessioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Ordine ord = mapOrdine(rs);
+                lista.add(ord);
+            }
+        }
+        return lista;
+    }
+
+ // 2. Filtra gli ordini complessivi da data X a data Y
+    public List<Ordine> doRetrieveByDate(String dataInizio, String dataFine) throws SQLException {
+        List<Ordine> lista = new ArrayList<>();
+        String query = "SELECT * FROM ordine WHERE data_ordine BETWEEN ? AND ? ORDER BY data_ordine DESC";
+        
+        try (Connection conn = ConnessioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            
+            // Convertiamo le stringhe del form in Timestamp SQL espliciti
+            java.sql.Timestamp inizioTS = java.sql.Timestamp.valueOf(dataInizio + " 00:00:00");
+            java.sql.Timestamp fineTS = java.sql.Timestamp.valueOf(dataFine + " 23:59:59");
+            
+            ps.setTimestamp(1, inizioTS);
+            ps.setTimestamp(2, fineTS);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapOrdine(rs));
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            System.err.println("❌ Formato data non valido ricevuto nel filtro: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // 3. Filtra gli ordini complessivi per uno specifico cliente
+    public List<Ordine> doRetrieveByCliente(String emailCliente) throws SQLException {
+        List<Ordine> lista = new ArrayList<>();
+        String query = "SELECT * FROM ordine WHERE utente_email = ? ORDER BY data_ordine DESC";
+        
+        try (Connection conn = ConnessioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, emailCliente);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapOrdine(rs));
+                }
+            }
+        }
+        return lista;
+    }
+    
+ // 4. Filtra gli ordini combinando sia l'intervallo di date che lo specifico cliente
+    public List<Ordine> doRetrieveByDateAndCliente(String dataInizio, String dataFine, String emailCliente) throws SQLException {
+        List<Ordine> lista = new ArrayList<>();
+        String query = "SELECT * FROM ordine WHERE (data_ordine BETWEEN ? AND ?) AND utente_email = ? ORDER BY data_ordine DESC";
+        
+        try (Connection conn = ConnessioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            
+            java.sql.Timestamp inizioTS = java.sql.Timestamp.valueOf(dataInizio + " 00:00:00");
+            java.sql.Timestamp fineTS = java.sql.Timestamp.valueOf(dataFine + " 23:59:59");
+            
+            ps.setTimestamp(1, inizioTS);
+            ps.setTimestamp(2, fineTS);
+            ps.setString(3, emailCliente);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapOrdine(rs));
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            System.err.println("❌ Formato data non valido nel filtro combinato: " + e.getMessage());
+        }
+        return lista;
+    }
+
+ // Helper method interno per evitare duplicazione di codice nella mappatura
+    private Ordine mapOrdine(ResultSet rs) throws SQLException {
+        Ordine ord = new Ordine();
+        ord.setId(rs.getInt("id")); 
+        ord.setTotale(rs.getDouble("totale"));
+        ord.setDataOrdine(rs.getTimestamp("data_ordine"));
+        ord.setStato(rs.getString("stato"));
+        ord.setIndirizzo(rs.getString("indirizzo"));
+        ord.setCitta(rs.getString("citta"));
+        ord.setCap(rs.getString("cap"));
+        
+        // Se hai aggiunto il campo utenteEmail nel model Ordine.java come consigliato:
+        // ord.setUtenteEmail(rs.getString("utente_email"));
+        
+        return ord;
     }
 }

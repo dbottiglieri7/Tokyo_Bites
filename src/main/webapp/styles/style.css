@@ -1,6 +1,5 @@
 @charset "UTF-8";
 
-/* --- Messaggio di Errore e Successo (Aggiornato per Tema Scuro) --- */
 .messaggio-errore {
     background-color: rgba(255, 56, 56, 0.15); /* Sfondo rosso scuro semi-trasparente */
     color: #ff4d4d;                            /* Testo rosso acceso ben visibile sul nero */
@@ -172,7 +171,6 @@ h1 {
 }
 
 /* --- INTEGRAZIONE SFONDO E STRUTTURA MENU --- */
-
 body.menu-page {
     background-image: none !important;
     background: #0b0b0b !important; 
@@ -308,4 +306,129 @@ body.menu-page {
 
 .btn-add-cart:hover {
     background: #e02424;
+}
+
+/* ==========================================
+   🆕 SEZIONE AGGIUNTA: CONSOLE AMMINISTRATORE
+   ========================================== */
+
+/* Contenitore principale scuro per la Dashboard */
+.admin-container {
+    max-width: 1100px;
+    margin: 120px auto 40px auto;
+    padding: 35px;
+    background-color: rgba(18, 18, 18, 0.92); /* Box nero intenso semi-trasparente */
+    border: 2px solid #ff3838;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
+}
+
+.admin-container h2, .admin-container h3 {
+    color: yellow;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    margin-top: 0;
+}
+
+/* Sottomenu di navigazione Admin (Gestione Catalogo | Visualizza Ordini) */
+.admin-subnav {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
+}
+
+.admin-subnav a {
+    color: #cccccc;
+    text-decoration: none;
+    font-weight: bold;
+    margin-right: 20px;
+    font-size: 1.1rem;
+    transition: color 0.2s;
+}
+
+.admin-subnav a:hover {
+    color: #ff3838;
+}
+
+/* Form orizzontale/compatto inserimento prodotti */
+.admin-form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    margin-bottom: 40px;
+}
+
+.admin-form-inline .form-group {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 180px;
+}
+
+.admin-form-inline select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #444444;
+    background-color: #222222; 
+    color: #ffffff;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+/* Tabelle di visualizzazione Dati (Prodotti e Ordini) */
+.admin-table-wrapper {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #161616;
+    color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #222;
+}
+
+.admin-table th {
+    background-color: #ff3838;
+    color: #ffffff;
+    font-weight: bold;
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 1rem;
+}
+
+.admin-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #2a2a2a;
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+.admin-table tr:hover {
+    background-color: #222222;
+}
+
+/* Bottone per le azioni sui record (es. Elimina) */
+.btn-admin-action {
+    background-color: #ff3838;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.btn-admin-action:hover {
+    background-color: #b31d1d;
 }

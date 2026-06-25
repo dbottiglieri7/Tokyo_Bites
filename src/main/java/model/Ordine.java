@@ -11,6 +11,8 @@ public class Ordine {
     private String indirizzo;  // NUOVO
     private String citta;      // NUOVO
     private String cap;        // NUOVO
+    private String utenteEmail; 
+
 
     // Costruttore vuoto
     public Ordine() {}
@@ -52,4 +54,7 @@ public class Ordine {
 
     public String getCap() { return cap; }
     public void setCap(String cap) { this.cap = cap; }
+    
+    public String getUtenteEmail() { return utenteEmail; }
+    public void setUtenteEmail(String utenteEmail) { this.utenteEmail = utenteEmail; }
 }

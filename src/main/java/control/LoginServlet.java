@@ -1,6 +1,7 @@
 package control;
 
 import java.io.IOException;
+import java.util.UUID;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -35,9 +36,29 @@ public class LoginServlet extends HttpServlet {
 
         if (utente != null) {
             HttpSession session = request.getSession(true);
+            
+            // Requisiti di traccia standard per il login utente
             session.setAttribute("utenteLoggato", utente.getNome());
             session.setAttribute("utenteCompleto", utente);
-            response.sendRedirect(request.getContextPath() + "/Home");
+            
+            // ==========================================
+            // INTEGRAZIONE LOGICHE AMMINISTRATORE
+            // ==========================================
+            
+            // 1. Salvataggio del ruolo in sessione ("admin" o "cliente")
+            session.setAttribute("ruoloUtente", utente.getRuolo());
+            
+            // 2. Generazione del Token di Sessione richiesto esplicitamente dalla traccia
+            String sessionToken = UUID.randomUUID().toString();
+            session.setAttribute("sessionToken", sessionToken);
+
+            // 3. Reindirizzamento dinamico in base al ruolo
+            if ("admin".equals(utente.getRuolo())) {
+                response.sendRedirect(request.getContextPath() + "/AdminDashboard");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/Home");
+            }
+            
         } else {
             // Il messaggio viene settato qui
             request.setAttribute("erroreLogin", "Email o password errate.");
