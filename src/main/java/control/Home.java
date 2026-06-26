@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/Home")
+@WebServlet({"/", "/Home"}) //se cerco http://localhost:8080/Tokyo_Bites/ vengo portato alla home
 public class Home extends HttpServlet {
     private static final long serialVersionUID = 1L;
        
