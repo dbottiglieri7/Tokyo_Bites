@@ -37,7 +37,6 @@ public class AdminServlet extends HttpServlet {
         try {
             switch (azione) {
                 case "visualizzaCatalogo":
-                    // CORRETTO: Adesso chiama getAllPiatti() che esiste nel tuo PiattoDAO
                     List<Piatto> catalogo = piattoDAO.getAllPiatti();
                     request.setAttribute("catalogo", catalogo);
                     request.getRequestDispatcher("/WEB-INF/view/AdminDashboard.jsp").forward(request, response);
@@ -50,17 +49,14 @@ public class AdminServlet extends HttpServlet {
 
                     List<Ordine> ordini;
 
-                    // 1. CASO COMPLETO: Sono presenti SIA le date (almeno una) SIA l'email
                     if (((dataInizio != null && !dataInizio.isEmpty()) || (dataFine != null && !dataFine.isEmpty())) 
                             && (emailCliente != null && !emailCliente.isEmpty())) {
                         
                         if (dataInizio == null || dataInizio.isEmpty()) dataInizio = "2000-01-01";
                         if (dataFine == null || dataFine.isEmpty()) dataFine = "2100-12-31";
                         
-                        // Serve un metodo combinato nel DAO (lo creiamo subito sotto)
                         ordini = ordineDAO.doRetrieveByDateAndCliente(dataInizio, dataFine, emailCliente);
 
-                    // 2. CASO SOLO DATE: Almeno una data inserita, ma nessuna email
                     } else if ((dataInizio != null && !dataInizio.isEmpty()) || (dataFine != null && !dataFine.isEmpty())) {
                         
                         if (dataInizio == null || dataInizio.isEmpty()) dataInizio = "2000-01-01";
@@ -68,11 +64,9 @@ public class AdminServlet extends HttpServlet {
                         
                         ordini = ordineDAO.doRetrieveByDate(dataInizio, dataFine);
 
-                    // 3. CASO SOLO EMAIL: Nessuna data inserita, ma c'è l'email
                     } else if (emailCliente != null && !emailCliente.isEmpty()) {
                         ordini = ordineDAO.doRetrieveByCliente(emailCliente);
 
-                    // 4. CASO NESSUN FILTRO: Tutto vuoto, mostra tutto l'elenco
                     } else {
                         ordini = ordineDAO.doRetrieveAllOrdini();
                     }
@@ -101,11 +95,13 @@ public class AdminServlet extends HttpServlet {
                 String nome = request.getParameter("nome");
                 double prezzo = Double.parseDouble(request.getParameter("prezzo"));
                 String categoria = request.getParameter("categoria");
+                String descrizione = request.getParameter("descrizione");
                 
                 Piatto nuovoPiatto = new Piatto();
                 nuovoPiatto.setNome(nome);
                 nuovoPiatto.setPrezzo(prezzo);
                 nuovoPiatto.setCategoria(categoria);
+                nuovoPiatto.setDescrizione(descrizione);
                 
                 piattoDAO.doSave(nuovoPiatto);
                 
@@ -114,12 +110,14 @@ public class AdminServlet extends HttpServlet {
                 String nome = request.getParameter("nome");
                 double prezzo = Double.parseDouble(request.getParameter("prezzo"));
                 String categoria = request.getParameter("categoria");
+                String descrizione = request.getParameter("descrizione");
                 
                 Piatto piattoModificato = new Piatto();
                 piattoModificato.setId(id);
                 piattoModificato.setNome(nome);
                 piattoModificato.setPrezzo(prezzo);
                 piattoModificato.setCategoria(categoria);
+                piattoModificato.setDescrizione(descrizione);
                 
                 piattoDAO.doUpdate(piattoModificato);
 

@@ -92,7 +92,7 @@ public class PiattoDAO {
     }
 
     // ==========================================
-    // METODI METODI AGGIUNTI PER L'AMMINISTRATORE
+    // METODI AGGIUNTI PER L'AMMINISTRATORE
     // ==========================================
 
     // Inserisce un nuovo piatto nel database (Create)
@@ -110,17 +110,18 @@ public class PiattoDAO {
         }
     }
 
-    // Modifica un piatto esistente (Update)
+    // CORRETTO: Modifica un piatto esistente includendo la DESCRIZIONE (Update)
     public void doUpdate(Piatto piatto) throws SQLException {
-        String query = "UPDATE prodotto SET nome = ?, prezzo = ?, categoria = ? WHERE id = ?";
+        String query = "UPDATE prodotto SET nome = ?, descrizione = ?, prezzo = ?, categoria = ? WHERE id = ?";
         try (Connection conn = ConnessioneDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, piatto.getNome());
-            ps.setDouble(2, piatto.getPrezzo());
-            ps.setString(3, piatto.getCategoria());
-            ps.setInt(4, piatto.getId());
+            ps.setString(2, piatto.getDescrizione() != null ? piatto.getDescrizione() : "");
+            ps.setDouble(3, piatto.getPrezzo());
+            ps.setString(4, piatto.getCategoria());
+            ps.setInt(5, piatto.getId()); // Spostato al quinto parametro
             ps.executeUpdate();
-            System.out.println("PiattoDAO: Piatto con ID " + piatto.getId() + " aggiornato con successo.");
+            System.out.println("PiattoDAO: Piatto con ID " + piatto.getId() + " aggiornato con successo nel DB.");
         }
     }
 
