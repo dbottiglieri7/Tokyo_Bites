@@ -127,6 +127,11 @@ public class OrdineDAO {
         }
         return lista;
     }
+    
+    private String utenteEmail;
+
+    public String getUtenteEmail() { return utenteEmail; }
+    public void setUtenteEmail(String utenteEmail) { this.utenteEmail = utenteEmail; }
 
     // ==========================================
     // METODI AGGIUNTI PER L'AMMINISTRATORE
@@ -228,9 +233,7 @@ public class OrdineDAO {
         ord.setIndirizzo(rs.getString("indirizzo"));
         ord.setCitta(rs.getString("citta"));
         ord.setCap(rs.getString("cap"));
-        
-        // Se hai aggiunto il campo utenteEmail nel model Ordine.java come consigliato:
-        // ord.setUtenteEmail(rs.getString("utente_email"));
+        ord.setUtenteEmail(rs.getString("utente_email"));
         
         return ord;
     }

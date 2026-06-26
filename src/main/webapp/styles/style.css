@@ -1,9 +1,29 @@
 @charset "UTF-8";
 
+/* ============================================================
+   TOKYO BITES - FOGLIO DI STILE PRINCIPALE
+
+   Questo file contiene tutti gli stili grafici dell'applicazione.
+
+   SEZIONI:
+   1. Messaggi di errore
+   2. Layout generale
+   3. Barra di navigazione
+   4. Pagina Login
+   5. Pagina Menu (inizio)
+
+   ============================================================ */
+
+
+/* ============================================================
+   MESSAGGI DI ERRORE
+   Utilizzati nelle pagine di Login e nelle validazioni.
+   ============================================================ */
+
 .messaggio-errore {
-    background-color: rgba(255, 56, 56, 0.15); /* Sfondo rosso scuro semi-trasparente */
-    color: #ff4d4d;                            /* Testo rosso acceso ben visibile sul nero */
-    border: 1px solid #ff3838;                 /* Bordo rosso coordinato con il brand */
+    background-color: rgba(255, 56, 56, 0.15);
+    color: #ff4d4d;
+    border: 1px solid #ff3838;
     padding: 12px 15px;
     margin-bottom: 20px;
     border-radius: 6px;
@@ -14,14 +34,19 @@
     width: 100%;
 }
 
-/* --- Reset e impostazioni di sfondo della pagina --- */
+
+/* ============================================================
+   LAYOUT GENERALE
+   Impostazioni comuni a tutte le pagine del sito.
+   ============================================================ */
+
 body {
-    background-image: url('../images/Sushi_Sfondo.jpeg'); 
+    background-image: url('../images/Sushi_Sfondo.jpeg');
     background-size: cover;
-    background-position: center;   
+    background-position: center;
     background-attachment: fixed;
-    background-repeat: no-repeat;  
-    color: #ffffff;            
+    background-repeat: no-repeat;
+    color: #ffffff;
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
@@ -29,10 +54,10 @@ body {
 }
 
 h1 {
-    color: yellow;            
+    color: yellow;
     text-align: center;
     margin-top: 50px;
-    font-size: 3rem; 
+    font-size: 3rem;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
 }
 
@@ -40,7 +65,12 @@ h1 {
     padding-top: 100px;
 }
 
-/* Stile della barra di navigazione principale */
+
+/* ============================================================
+   BARRA DI NAVIGAZIONE
+   Presente in tutte le pagine dell'applicazione.
+   ============================================================ */
+
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -53,14 +83,14 @@ h1 {
     width: 100%;
     box-sizing: border-box;
     z-index: 1000;
-    border-bottom: 2px solid #ff3838; 
+    border-bottom: 2px solid #ff3838;
 }
 
 .nav-logo a {
     color: #ffffff;
     font-size: 1.8rem;
     font-weight: bold;
-    text-decoration: none; 
+    text-decoration: none;
     letter-spacing: 1px;
 }
 
@@ -84,36 +114,41 @@ h1 {
 }
 
 .nav-links a:hover {
-    color: #ff3838; 
+    color: #ff3838;
 }
 
 .nav-links a.active {
     color: #ff3838;
-    border-bottom: 2px solid #ff3838; 
+    border-bottom: 2px solid #ff3838;
     padding-bottom: 5px;
 }
-    
-/* --- Modulo di Login --- */
+
+
+/* ============================================================
+   PAGINA LOGIN
+   Contiene il box centrale con il form di autenticazione.
+   ============================================================ */
+
 .login-page-wrapper {
     display: flex;
-    justify-content: center;  
-    align-items: center;      
-    min-height: calc(100vh - 80px); 
-    padding-top: 80px;        
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px);
+    padding-top: 80px;
     box-sizing: border-box;
     width: 100%;
 }
 
 .login-box {
-    background-color: #121212; 
+    background-color: #121212;
     padding: 40px;
     border-radius: 10px;
-    border: 2px solid #ff3838; 
+    border: 2px solid #ff3838;
     width: 100%;
-    max-width: 380px;          
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); 
+    max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     text-align: center;
-    position: relative;        
+    position: relative;
 }
 
 .login-box h2 {
@@ -125,7 +160,7 @@ h1 {
 
 .form-group {
     margin-bottom: 20px;
-    text-align: left;         
+    text-align: left;
 }
 
 .form-group label {
@@ -140,7 +175,7 @@ h1 {
     width: 100%;
     padding: 12px;
     border: 1px solid #444444;
-    background-color: #222222; 
+    background-color: #222222;
     color: #ffffff;
     border-radius: 5px;
     box-sizing: border-box;
@@ -170,10 +205,20 @@ h1 {
     background-color: #e02424;
 }
 
-/* --- INTEGRAZIONE SFONDO E STRUTTURA MENU --- */
+
+/* ============================================================
+   PAGINA MENU
+   Contiene:
+   - Sfondo della pagina
+   - Contenitore principale
+   - Titolo
+   - Schede delle categorie
+   - Griglia dei prodotti
+   ============================================================ */
+
 body.menu-page {
     background-image: none !important;
-    background: #0b0b0b !important; 
+    background: #0b0b0b !important;
     background-color: #0b0b0b !important;
 }
 
@@ -181,7 +226,7 @@ body.menu-page {
     max-width: 1200px;
     margin: 120px auto 40px auto;
     padding: 30px;
-    background: #141414; 
+    background: #141414;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border: 1px solid #222;
@@ -207,7 +252,7 @@ body.menu-page {
     display: inline-block;
     padding: 12px 24px;
     background: #1a1a1a;
-    color: #ffffff !important; 
+    color: #ffffff !important;
     text-decoration: none;
     font-weight: bold;
     border-radius: 30px;
@@ -217,33 +262,37 @@ body.menu-page {
     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
-.categories-tabs a.tab.active, 
+.categories-tabs a.tab.active,
 .categories-tabs a.tab:hover {
     background: #ff3838;
     color: #ffffff !important;
     box-shadow: 0 0 15px rgba(255, 56, 56, 0.6);
     transform: translateY(-2px);
 }
-
 .products-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
     gap: 30px !important;
 }
 
+/* ============================================================
+   CARD DEI PIATTI
+   Definisce l'aspetto grafico di ogni piatto del menu.
+   ============================================================ */
+
 .product-card {
     background: #1a1a1a !important;
     border: 1px solid #333 !important;
     border-radius: 12px !important;
     overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 .product-image-box {
     width: 100% !important;
-    height: 200px !important; 
+    height: 200px !important;
     background: #222 !important;
     display: flex !important;
     align-items: center !important;
@@ -308,29 +357,134 @@ body.menu-page {
     background: #e02424;
 }
 
-/* ==========================================
-   🆕 SEZIONE AGGIUNTA: CONSOLE AMMINISTRATORE
-   ========================================== */
 
-/* Contenitore principale scuro per la Dashboard */
+/* ============================================================
+   BARRA DI RICERCA DEL MENU
+   Permette di filtrare i piatti in tempo reale.
+   ============================================================ */
+
+.search-container {
+    text-align: center;
+    margin: 20px auto;
+    max-width: 500px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border: 2px solid #ff3838;
+    border-radius: 25px;
+    background-color: #1a1a1a;
+    color: white;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    box-shadow: 0 0 10px rgba(255, 56, 56, 0.5);
+}
+
+
+/* ============================================================
+   MODAL DI INGRANDIMENTO IMMAGINI
+   Visualizzato quando l'utente clicca sull'immagine di un piatto.
+   ============================================================ */
+
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    cursor: pointer;
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    max-height: 70vh;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    animation: zoomIn 0.3s ease;
+}
+
+.modal-caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    text-align: center;
+    color: white;
+    padding: 15px 0;
+    font-size: 1.5rem;
+    font-family: sans-serif;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+
+/* ============================================================
+   EFFETTI SULLE IMMAGINI DEL MENU
+   ============================================================ */
+
+.product-img {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.product-img:hover {
+    transform: scale(1.03);
+}
+
+
+/* ============================================================
+   CONSOLE AMMINISTRATORE
+   Comprende:
+   - Dashboard
+   - Gestione Catalogo
+   - Gestione Ordini
+   - Tabelle
+   - Form di inserimento prodotti
+   ============================================================ */
+
+/* Contenitore principale della Dashboard */
+
 .admin-container {
     max-width: 1100px;
     margin: 120px auto 40px auto;
     padding: 35px;
-    background-color: rgba(18, 18, 18, 0.92); /* Box nero intenso semi-trasparente */
+    background-color: rgba(18, 18, 18, 0.92);
     border: 2px solid #ff3838;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     box-sizing: border-box;
 }
 
-.admin-container h2, .admin-container h3 {
+.admin-container h2,
+.admin-container h3 {
     color: yellow;
     text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
     margin-top: 0;
 }
 
-/* Sottomenu di navigazione Admin (Gestione Catalogo | Visualizza Ordini) */
+
+/* ============================================================
+   MENU DI NAVIGAZIONE DELL'AMMINISTRATORE
+   ============================================================ */
+
 .admin-subnav {
     margin-bottom: 30px;
     padding-bottom: 15px;
@@ -350,7 +504,11 @@ body.menu-page {
     color: #ff3838;
 }
 
-/* Form orizzontale/compatto inserimento prodotti */
+
+/* ============================================================
+   FORM DI INSERIMENTO NUOVI PRODOTTI
+   ============================================================ */
+
 .admin-form-inline {
     display: flex;
     flex-wrap: wrap;
@@ -373,14 +531,19 @@ body.menu-page {
     width: 100%;
     padding: 12px;
     border: 1px solid #444444;
-    background-color: #222222; 
+    background-color: #222222;
     color: #ffffff;
     border-radius: 5px;
     box-sizing: border-box;
     font-size: 1rem;
 }
 
-/* Tabelle di visualizzazione Dati (Prodotti e Ordini) */
+
+/* ============================================================
+   TABELLE DELLA CONSOLE AMMINISTRATORE
+   Utilizzate per la visualizzazione di prodotti e ordini.
+   ============================================================ */
+
 .admin-table-wrapper {
     overflow-x: auto;
     margin-top: 20px;
@@ -416,7 +579,12 @@ body.menu-page {
     background-color: #222222;
 }
 
-/* Bottone per le azioni sui record (es. Elimina) */
+
+/* ============================================================
+   PULSANTI DELLA CONSOLE AMMINISTRATORE
+   Utilizzati per operazioni come Eliminazione prodotti.
+   ============================================================ */
+
 .btn-admin-action {
     background-color: #ff3838;
     color: white;

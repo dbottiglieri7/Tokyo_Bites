@@ -11,7 +11,6 @@
 </head>
 <body class="menu-page"> 
     <%
-        // Recuperiamo il carrello per calcolare dinamicamente contatori e moltiplicatori all'avvio della pagina
         Carrello carrelloNav = (Carrello) session.getAttribute("carrello");
         int totaleElementiCarrello = (carrelloNav != null) ? carrelloNav.getElementi().size() : 0;
     %>
@@ -58,35 +57,29 @@
         %>
         
         <div class="categories-tabs">
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Sushi e Sashimi" 
-               class="tab <%= catAttuale.equalsIgnoreCase("Sushi e Sashimi") ? "active" : "" %>">Sushi & Sashimi</a>
-               
-            <a href="${pageContext.request.contextPath}/Menu?categoria=SushiRoll" 
-               class="tab <%= catAttuale.equalsIgnoreCase("SushiRoll") ? "active" : "" %>">Sushi Roll</a>
-            
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Ravioli e Sfizi" 
-               class="tab <%= catAttuale.equalsIgnoreCase("Ravioli e Sfizi") ? "active" : "" %>">Ravioli & Sfizi</a>
-            
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Primi Piatti" 
-               class="tab <%= catAttuale.equalsIgnoreCase("Primi Piatti") ? "active" : "" %>">Primi Piatti</a>
-               
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Noodles" 
-               class="tab <%= catAttuale.equalsIgnoreCase("Noodles") ? "active" : "" %>">Noodles</a>
-               
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Antipasti" 
-               class="tab <%= catAttuale.equalsIgnoreCase("Antipasti") ? "active" : "" %>">Antipasti</a>
-               
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Bevande" 
-               class="tab <%= catAttuale.equalsIgnoreCase("Bevande") ? "active" : "" %>">Bevande</a>
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Sushi e Sashimi" class="tab <%= catAttuale.equalsIgnoreCase("Sushi e Sashimi") ? "active" : "" %>">Sushi & Sashimi</a>
+            <a href="${pageContext.request.contextPath}/Menu?categoria=SushiRoll" class="tab <%= catAttuale.equalsIgnoreCase("SushiRoll") ? "active" : "" %>">Sushi Roll</a>
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Ravioli e Sfizi" class="tab <%= catAttuale.equalsIgnoreCase("Ravioli e Sfizi") ? "active" : "" %>">Ravioli & Sfizi</a>
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Primi Piatti" class="tab <%= catAttuale.equalsIgnoreCase("Primi Piatti") ? "active" : "" %>">Primi Piatti</a>
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Noodles" class="tab <%= catAttuale.equalsIgnoreCase("Noodles") ? "active" : "" %>">Noodles</a>
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Antipasti" class="tab <%= catAttuale.equalsIgnoreCase("Antipasti") ? "active" : "" %>">Antipasti</a>
+            <a href="${pageContext.request.contextPath}/Menu?categoria=Bevande" class="tab <%= catAttuale.equalsIgnoreCase("Bevande") ? "active" : "" %>">Bevande</a>
         </div>
 
-        <div class="products-grid">
+        <div class="search-container">
+            <input type="text" 
+                   id="menu-search" 
+                   class="search-input" 
+                   placeholder="Cerca un piatto in questa categoria... 🔍" 
+                   oninput="filtraPiattiInTempoReale()"
+                   onkeydown="if(event.key === 'Enter') event.preventDefault();">
+        </div>
+
+        <div class="products-grid" id="products-grid">
             <%
                 List<Piatto> prodotti = (List<Piatto>) request.getAttribute("prodottiMenu");
                 if (prodotti != null && !prodotti.isEmpty()) {
                     for (Piatto p : prodotti) {
-                        
-                        // PUNTO 2: Calcoliamo quanti elementi di QUESTO specifico piatto ci sono già nel carrello
                         int quantitaGiaPresente = 0;
                         if (carrelloNav != null) {
                             for (Piatto item : carrelloNav.getElementi()) {
@@ -96,12 +89,15 @@
                             }
                         }
             %>
-                <div class="product-card">
+                <div class="product-card product-card-item">
                     <div class="product-image-box">
-                        <img src="${pageContext.request.contextPath}/images/<%= p.getImmagine() %>" alt="<%= p.getNome() %>" class="product-img">
+                        <img src="${pageContext.request.contextPath}/images/<%= p.getImmagine() %>" 
+                             alt="<%= p.getNome() %>" 
+                             class="product-img" 
+                             onclick="apriIngrandimento(this.src, '<%= p.getNome().replace("'", "\\'") %>')">
                     </div>
                     <div class="product-info">
-                        <h3 class="product-name">
+                        <h3 class="product-name target-name">
                             <%= p.getNome() %>
                             <span id="moltiplicatore-<%= p.getId() %>" style="color: yellow; margin-left: 5px; font-size: 1rem; <%= (quantitaGiaPresente > 0) ? "" : "display:none;" %>">
                                 (x<%= quantitaGiaPresente %>)
@@ -115,7 +111,6 @@
                             <form action="${pageContext.request.contextPath}/Carrello" method="POST" style="margin: 0;" onsubmit="aggiungiAlCarrelloAjax(event, this, <%= p.getId() %>)">
                                 <input type="hidden" name="idPiatto" value="<%= p.getId() %>">
                                 <input type="hidden" name="categoriaProvenienza" value="<%= catAttuale %>">
-                                
                                 <button type="submit" class="btn-add-cart">Aggiungi</button>
                             </form>
                         </div>
@@ -132,31 +127,74 @@
         </div>
     </div>
 
-    <script>
-        function aggiungiAlCarrelloAjax(event, formElement, idPiatto) {
-            // Blocca il caricamento e redirect nativo della pagina
-            event.preventDefault();
+    <div id="image-zoom-modal" class="image-modal" onclick="chiudiIngrandimento()">
+        <img class="modal-content" id="img-target-zoom">
+        <div id="modal-caption" class="modal-caption"></div>
+    </div>
 
+    <script>
+        // Filtro di ricerca Istantaneo e reattivo a ogni singola lettera
+        function filtraPiattiInTempoReale() {
+            const barraRicerca = document.getElementById('menu-search');
+            const filtro = barraRicerca.value.toLowerCase().trim();
+            const schedePiatti = document.getElementsByClassName('product-card-item');
+
+            for (let i = 0; i < schedePiatti.length; i++) {
+                const tagNome = schedePiatti[i].querySelector('.target-name');
+                if (tagNome) {
+                    // Cloniamo il nodo per poter manipolare il testo in sicurezza senza rompere la pagina
+                    const copiaNodo = tagNome.cloneNode(true);
+                    const spanInterno = copiaNodo.querySelector('span');
+                    if (spanInterno) {
+                        copiaNodo.removeChild(spanInterno); // Rimuoviamo il tag (x1, x2) dal calcolo del filtro
+                    }
+                    
+                    const testoNomePulito = copiaNodo.textContent.toLowerCase().trim();
+                    
+                    if (testoNomePulito.includes(filtro)) {
+                        schedePiatti[i].style.display = "";
+                    } else {
+                        schedePiatti[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        // Modal Ingrandimento Immagine
+        function apriIngrandimento(srcImmagine, nomePiatto) {
+            const modal = document.getElementById('image-zoom-modal');
+            const modalImg = document.getElementById('img-target-zoom');
+            const caption = document.getElementById('modal-caption');
+            
+            modal.style.display = "block";
+            modalImg.src = srcImmagine;
+            caption.innerHTML = nomePiatto;
+        }
+
+        function chiudiIngrandimento() {
+            document.getElementById('image-zoom-modal').style.display = "none";
+        }
+
+        // Script AJAX per l'aggiunta dei piatti
+        function aggiungiAlCarrelloAjax(event, formElement, idPiatto) {
+            event.preventDefault();
             const formData = new URLSearchParams(new FormData(formElement));
 
-            // Esegue l'invio asincrono strutturato
             fetch(formElement.action, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest' // Dice alla Servlet di rispondere in formato JSON
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: formData.toString()
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // 1. Incrementa il badge numerico totale della navbar (Punto 3)
                     const badge = document.getElementById('badge-carrello');
                     let conteggioAttuale = parseInt(badge.innerText, 10);
                     badge.innerText = conteggioAttuale + 1;
 
-                    // 2. Aggiorna o mostra il moltiplicatore (x1, x2) vicino al nome del prodotto (Punto 2)
                     const moltiplicatoreSpan = document.getElementById('moltiplicatore-' + idPiatto);
                     if (moltiplicatoreSpan) {
                         moltiplicatoreSpan.innerText = '(x' + data.nuovaQuantita + ')';
@@ -167,7 +205,7 @@
             .catch(error => console.error('Errore nell\'aggiunta AJAX dal menu:', error));
         }
 
-        // Script per preservare la posizione dello scroll nativo
+        // Script posizione scroll nativo
         window.addEventListener('beforeunload', function() {
             localStorage.setItem('scrollPositionMenu', window.scrollY);
         });
