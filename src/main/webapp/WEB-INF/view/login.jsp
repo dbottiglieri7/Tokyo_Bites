@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="model.Carrello" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +8,10 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
 </head>
 <body>
-
+<%
+    Carrello carrelloNav = (Carrello) session.getAttribute("carrello");
+    int totaleElementiCarrello = (carrelloNav != null) ? carrelloNav.getElementi().size() : 0;
+%>
     <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
         <div class="nav-logo">
             <a href="${pageContext.request.contextPath}/Home" style="color: white; text-decoration: none; font-weight: bold; font-size: 1.5em;">Tokyo Bites 🍣</a>
@@ -16,7 +20,11 @@
         <ul class="nav-links" style="list-style: none; display: flex; align-items: center; margin: 0; padding: 0;">
             <li><a href="${pageContext.request.contextPath}/Home" style="color: white; text-decoration: none; margin-left: 20px;">Home 🏠</a></li>
             <li><a href="${pageContext.request.contextPath}/Menu" style="color: white; text-decoration: none; margin-left: 20px;">Menu 🍣</a></li>
-            <li><a href="${pageContext.request.contextPath}/Carrello" style="color: white; text-decoration: none; margin-left: 20px;">Carrello 🛒</a></li>
+            <li>
+    <a href="${pageContext.request.contextPath}/Carrello" style="color: white; text-decoration: none; margin-left: 20px;">
+        Carrello 🛒 <span style="background: #ff3838; color: white; padding: 2px 7px; border-radius: 50%; font-size: 0.85rem; font-weight: bold; margin-left: 3px;"><%= totaleElementiCarrello %></span>
+    </a>
+</li>
             
             <% 
                 String utente = (String) session.getAttribute("utenteLoggato");
