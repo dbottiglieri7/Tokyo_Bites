@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -74,6 +75,33 @@ public class AdminServlet extends HttpServlet {
                     request.setAttribute("ordini", ordini);
                     request.getRequestDispatcher("/WEB-INF/view/AdminOrdini.jsp").forward(request, response);
                     break;
+
+                case "dettaglioOrdine":
+                    // Chiamata AJAX per ottenere i piatti associati a un ordine
+                    int idOrdine = Integer.parseInt(request.getParameter("idOrdine"));
+                    
+                    // Recuperiamo la lista di piatti per questo ordine dal DAO
+                    List<Piatto> piattiOrdinati = ordineDAO.doRetrievePiattiByOrdine(idOrdine);
+                    
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    PrintWriter out = response.getWriter();
+                    
+                    // Costruiamo un JSON manuale leggero per l'AJAX della JSP
+                    StringBuilder json = new StringBuilder("[");
+                    for (int i = 0; i < piattiOrdinati.size(); i++) {
+                        Piatto p = piattiOrdinati.get(i);
+                        json.append("{")
+                            .append("\"nome\":\"").append(p.getNome().replace("\"", "\\\"")).append("\",")
+                            .append("\"prezzo\":").append(p.getPrezzo())
+                            .append("}");
+                        if (i < piattiOrdinati.size() - 1) json.append(",");
+                    }
+                    json.append("]");
+                    
+                    out.print(json.toString());
+                    out.flush();
+                    return; // Interrompiamo il flusso per non fare forward a nessuna pagina JSP
             }
         } catch (SQLException e) {
             throw new ServletException(e);
@@ -104,6 +132,7 @@ public class AdminServlet extends HttpServlet {
                 nuovoPiatto.setDescrizione(descrizione);
                 
                 piattoDAO.doSave(nuovoPiatto);
+                response.sendRedirect(request.getContextPath() + "/AdminDashboard?azione=visualizzaCatalogo");
                 
             } else if ("modifica".equals(azione)) {
                 int id = Integer.parseInt(request.getParameter("idPiatto"));
@@ -120,13 +149,25 @@ public class AdminServlet extends HttpServlet {
                 piattoModificato.setDescrizione(descrizione);
                 
                 piattoDAO.doUpdate(piattoModificato);
+                response.sendRedirect(request.getContextPath() + "/AdminDashboard?azione=visualizzaCatalogo");
 
             } else if ("cancella".equals(azione)) {
                 int id = Integer.parseInt(request.getParameter("idPiatto"));
                 piattoDAO.doDeleteLogico(id); 
+                response.sendRedirect(request.getContextPath() + "/AdminDashboard?azione=visualizzaCatalogo");
+                
+            } else if ("modificaStato".equals(azione)) {
+                // MODIFICA RICHIESTA: Gestione dello stato tramite risposta testuale asincrona
+                int idOrdine = Integer.parseInt(request.getParameter("idOrdine"));
+                String nuovoStato = request.getParameter("nuovoStato");
+
+                ordineDAO.doUpdateStato(idOrdine, nuovoStato);
+
+                response.setContentType("text/plain");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().print("OK");
+                return; // Interrompe il flusso per non fare redirect o rimandare HTML inutile
             }
-            
-            response.sendRedirect(request.getContextPath() + "/AdminDashboard?azione=visualizzaCatalogo");
             
         } catch (SQLException e) {
             throw new ServletException(e);

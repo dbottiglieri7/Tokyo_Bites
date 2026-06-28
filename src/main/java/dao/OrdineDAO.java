@@ -153,7 +153,7 @@ public class OrdineDAO {
         return lista;
     }
 
- // 2. Filtra gli ordini complessivi da data X a data Y
+    // 2. Filtra gli ordini complessivi da data X a data Y
     public List<Ordine> doRetrieveByDate(String dataInizio, String dataFine) throws SQLException {
         List<Ordine> lista = new ArrayList<>();
         String query = "SELECT * FROM ordine WHERE data_ordine BETWEEN ? AND ? ORDER BY data_ordine DESC";
@@ -197,7 +197,7 @@ public class OrdineDAO {
         return lista;
     }
     
- // 4. Filtra gli ordini combinando sia l'intervallo di date che lo specifico cliente
+    // 4. Filtra gli ordini combinando sia l'intervallo di date che lo specifico cliente
     public List<Ordine> doRetrieveByDateAndCliente(String dataInizio, String dataFine, String emailCliente) throws SQLException {
         List<Ordine> lista = new ArrayList<>();
         String query = "SELECT * FROM ordine WHERE (data_ordine BETWEEN ? AND ?) AND utente_email = ? ORDER BY data_ordine DESC";
@@ -223,7 +223,48 @@ public class OrdineDAO {
         return lista;
     }
 
- // Helper method interno per evitare duplicazione di codice nella mappatura
+    // 5. NUOVO METODO: Modifica lo stato dell'ordine nel database
+    public void doUpdateStato(int idOrdine, String nuovoStato) throws SQLException {
+        String query = "UPDATE ordine SET stato = ? WHERE id = ?";
+        
+        try (Connection conn = ConnessioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, nuovoStato);
+            ps.setInt(2, idOrdine);
+            ps.executeUpdate();
+        }
+    }
+
+    // 6. NUOVO METODO: Recupera la lista dei piatti acquistati all'interno di un ordine (per il tasto Dettagli)
+    public List<Piatto> doRetrievePiattiByOrdine(int idOrdine) throws SQLException {
+        List<Piatto> listaPiatti = new ArrayList<>();
+        // Effettuiamo una JOIN tra la tabella delle righe dell'ordine e la tabella dei piatti/prodotti nel catalogo
+        // NOTA: Se la tua tabella dei piatti non si chiama 'piatto', sostituisci con il nome corretto (es. 'prodotto')
+        String query =
+        	    "SELECT p.nome, ro.prezzo_acquisto, ro.quantita " +
+        	    "FROM riga_ordine ro " +
+        	    "INNER JOIN prodotto p ON ro.id_prodotto = p.id " +
+        	    "WHERE ro.id_ordine = ?";
+        
+        try (Connection conn = ConnessioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, idOrdine);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Piatto p = new Piatto();
+                    // Gestiamo la quantità moltiplicandola o inserendola nel nome per visualizzarla nel Pop-up JSON
+                    int quantita = rs.getInt("quantita");
+                    p.setNome(rs.getString("nome") + " (x" + quantita + ")");
+                    p.setPrezzo(rs.getDouble("prezzo_acquisto"));
+                    listaPiatti.add(p);
+                }
+            }
+        }
+        return listaPiatti;
+    }
+
+    // Helper method interno per evitare duplicazione di codice nella mappatura
     private Ordine mapOrdine(ResultSet rs) throws SQLException {
         Ordine ord = new Ordine();
         ord.setId(rs.getInt("id")); 

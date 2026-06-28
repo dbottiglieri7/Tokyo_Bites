@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @WebServlet("/ConfermaOrdine")
@@ -42,17 +44,59 @@ public class ConfermaOrdineServlet extends HttpServlet {
             return;
         }
 
-        // Recuperiamo i singoli parametri di spedizione richiesti dall' OrdineDAO
+        // 1. Recupero dei parametri del form
         String indirizzo = request.getParameter("indirizzo");
         String citta = request.getParameter("citta");
         String cap = request.getParameter("cap");
+        String inputScadenza = request.getParameter("scadenza"); // Ci aspettiamo il formato MM/AAAA dal form
+        String numeroCarta = request.getParameter("numeroCarta");
 
-        // Fallback di sicurezza se i campi del form checkout fossero vuoti
-        if (indirizzo == null) indirizzo = "Non specificato";
-        if (citta == null) citta = "Non specificato";
-        if (cap == null) cap = "00000";
+        // 2. CONTROLLO DI VALIDAZIONE LATO SERVER (CAP e Carta)
+        if (cap == null || !cap.matches("\\d{5}")) {
+            request.setAttribute("errorePagamento", "Il CAP deve essere composto esattamente da 5 cifre numeriche.");
+            request.getRequestDispatcher("/WEB-INF/view/checkout.jsp").forward(request, response);
+            return;
+        }
 
-        // Estraiamo l'email reale dall'utente in sessione, con un fallback di sicurezza se fosse nullo
+        if (numeroCarta == null || !numeroCarta.matches("\\d{16}")) {
+            request.setAttribute("errorePagamento", "Il numero della carta deve essere composto esattamente da 16 cifre numeriche.");
+            request.getRequestDispatcher("/WEB-INF/view/checkout.jsp").forward(request, response);
+            return;
+        }
+
+        // 3. CONTROLLO DATA DI SCADENZA CARTA
+        if (inputScadenza == null || inputScadenza.isEmpty()) {
+            request.setAttribute("errorePagamento", "La data di scadenza è obbligatoria.");
+            request.getRequestDispatcher("/WEB-INF/view/checkout.jsp").forward(request, response);
+            return;
+        }
+
+        try {
+            // Definiamo il formato di lettura (Mese e Anno a 4 cifre)
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+            // Parsiamo la stringa ricevuta in un oggetto YearMonth
+            YearMonth scadenzaCarta = YearMonth.parse(inputScadenza.trim(), formatter);
+            // Otteniamo il mese e l'anno corrente (2026)
+            YearMonth meseCorrente = YearMonth.now();
+
+            // Se la carta scade prima del mese corrente, blocchiamo l'ordine
+            if (scadenzaCarta.isBefore(meseCorrente)) {
+                request.setAttribute("errorePagamento", "La carta di credito inserita è scaduta.");
+                request.getRequestDispatcher("/WEB-INF/view/checkout.jsp").forward(request, response);
+                return;
+            }
+        } catch (Exception e) {
+            // Se l'utente scrive formati strani o inserisce lettere, il parse fallisce ed entra qui
+            request.setAttribute("errorePagamento", "Formato data scadenza non valido. Usa il formato MM/AAAA.");
+            request.getRequestDispatcher("/WEB-INF/view/checkout.jsp").forward(request, response);
+            return;
+        }
+
+        // Fallback di sicurezza se i campi di spedizione fossero vuoti
+        if (indirizzo == null || indirizzo.trim().isEmpty()) indirizzo = "Non specificato";
+        if (citta == null || citta.trim().isEmpty()) citta = "Non specificato";
+
+        // Estraiamo l'email reale dall'utente in sessione
         String emailUtente = (utenteCompleto != null) ? utenteCompleto.getEmail() : "cliente@test.com";
         double totale = carrello.getPrezzoTotale();
 

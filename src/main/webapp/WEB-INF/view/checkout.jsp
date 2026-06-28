@@ -64,6 +64,12 @@
             <button type="submit" class="btn-add-cart" style="width: 100%; padding: 14px; font-size: 1.1rem; border-radius: 30px;">
                 Paga e Conferma Ordine 
             </button>
+            
+            <% if (request.getAttribute("errorePagamento") != null) { %>
+  					  <p style="color: red; font-weight: bold; text-align: center;">
+      					  <%= request.getAttribute("errorePagamento") %>
+   					 </p>
+			<% } %>
         </form>
     </div>
 

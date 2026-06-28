@@ -38,7 +38,7 @@ public class PiattoDAO {
         return lista;
     }
 
-    // Recupera i piatti filtrati per categoria
+    // NUOVO/RIPRISTINATO: Recupera i piatti filtrati per categoria (richiesto dal main)
     public List<Piatto> getPiattiByCategoria(String categoria) {
         List<Piatto> lista = new ArrayList<>();
         String query = "SELECT * FROM prodotto WHERE categoria = ?";
@@ -59,12 +59,36 @@ public class PiattoDAO {
                     lista.add(p);
                 }
             }
-            System.out.println("PiattoDAO: Recuperati " + lista.size() + " piatti per la categoria: " + categoria);
-
         } catch (SQLException e) {
             System.err.println("❌ Errore in PiattoDAO.getPiattiByCategoria: " + e.getMessage());
         }
         return lista;
+    }
+
+    // Recupera i dettagli storici dei piatti legati a un ordine specifico
+    public List<Piatto> doRetrievePiattiByOrdine(int idOrdine) throws SQLException {
+        List<Piatto> listaPiatti = new ArrayList<>();
+        String query =
+            "SELECT p.nome, ro.prezzo_acquisto, ro.quantita " +
+            "FROM riga_ordine ro " +
+            "INNER JOIN prodotto p ON ro.id_prodotto = p.id " +
+            "WHERE ro.id_ordine = ?";
+
+        try (Connection conn = ConnessioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, idOrdine);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Piatto p = new Piatto();
+                    int quantita = rs.getInt("quantita");
+                    p.setNome(rs.getString("nome") + " x" + quantita);
+                    p.setPrezzo(rs.getDouble("prezzo_acquisto"));
+                    listaPiatti.add(p);
+                }
+            }
+        }
+        return listaPiatti;
     }
     
     // Recupera un singolo piatto tramite la sua chiave primaria
@@ -110,7 +134,7 @@ public class PiattoDAO {
         }
     }
 
-    // CORRETTO: Modifica un piatto esistente includendo la DESCRIZIONE (Update)
+    // Modifica un piatto esistente includendo la descrizione (Update)
     public void doUpdate(Piatto piatto) throws SQLException {
         String query = "UPDATE prodotto SET nome = ?, descrizione = ?, prezzo = ?, categoria = ? WHERE id = ?";
         try (Connection conn = ConnessioneDB.getConnection();
@@ -119,7 +143,7 @@ public class PiattoDAO {
             ps.setString(2, piatto.getDescrizione() != null ? piatto.getDescrizione() : "");
             ps.setDouble(3, piatto.getPrezzo());
             ps.setString(4, piatto.getCategoria());
-            ps.setInt(5, piatto.getId()); // Spostato al quinto parametro
+            ps.setInt(5, piatto.getId());
             ps.executeUpdate();
             System.out.println("PiattoDAO: Piatto con ID " + piatto.getId() + " aggiornato con successo nel DB.");
         }
