@@ -29,23 +29,30 @@
     <main class="admin-container">
         <h2>Console Amministratore</h2>
         
-        <%-- SOTTO-NAVIGAZIONE PER IL PANNELLO ADMIN --%>
-        <div class="admin-subnav" style="margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #333;">
-            <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaCatalogo" 
-               style="color: #cccccc !important; text-decoration: none !important; font-weight: bold; font-size: 1.1rem; margin-right: 20px;"
-               onmouseover="this.style.color='#ff3838'" onmouseout="this.style.color='#cccccc'">
-               Gestione Catalogo
-            </a> | 
-            <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaOrdini" 
-               style="color: #ffffff !important; text-decoration: none !important; font-weight: bold; font-size: 1.1rem; margin-right: 20px;">
-               Visualizza Ordini
-            </a> | 
-            <a href="${pageContext.request.contextPath}/Logout" 
-               style="color: #ff4d4d !important; text-decoration: none !important; font-weight: bold; font-size: 1.1rem;"
-               onmouseover="this.style.color='#ff0000'" onmouseout="this.style.color='#ff4d4d'">
-               Logout
-            </a>
+     <%-- NAVBAR DEDICATA ALL'AMMINISTRATORE --%>
+    <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+        <div class="nav-logo">
+            <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaCatalogo" style="color: white; text-decoration: none; font-weight: bold; font-size: 1.5em;">Tokyo Bites Admin 🍣</a>
         </div>
+        
+        <ul class="nav-links" style="list-style: none; display: flex; align-items: center; margin: 0; padding: 0;">
+            <li>
+                <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaCatalogo" style="color: yellow; text-decoration: none; margin-left: 20px; font-weight: bold;">
+                    Gestione Catalogo 📋
+                </a>
+            </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaOrdini" style="color: yellow; text-decoration: none; margin-left: 20px; font-weight: bold;">
+                    Visualizza Ordini 📦
+                </a>
+            </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/Logout" style="color: #ff3838; text-decoration: none; margin-left: 20px; font-weight: bold;">
+                    Logout Admin 👤
+                </a>
+            </li>
+        </ul>
+    </nav>
 
         <%-- FORM DI FILTRAGGIO AVANZATO (Richiesto esplicitamente per data x-y e cliente) --%>
         <h3>Filtra gli Ordini Ricevuti</h3>

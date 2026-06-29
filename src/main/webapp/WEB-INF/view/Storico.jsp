@@ -85,7 +85,7 @@
                         </tr>
                         <tr style="border-bottom: 1px solid #444; background-color: rgba(0, 0, 0, 0.2);">
                             <td colspan="5" style="padding: 10px 20px;">
-                                <div style="font-size: 0.9rem; color: #bbb; padding-bottom: 5px;"><strong>Dettaglio Piatti Ordinati:</strong></div>
+                                <div style="font-size: 0.9rem; color: yellow; padding-bottom: 5px;"><strong>Dettaglio Piatti Ordinati:</strong></div>
                                 <ul style="list-style: none; padding: 0; margin: 0;">
                                     <% 
                                         List<Piatto> piattiOrdinati = (List<Piatto>) request.getAttribute("piatti_ordine_" + ordine.getId());

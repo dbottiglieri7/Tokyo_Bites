@@ -8,15 +8,34 @@
 </head>
 <body>
 
-    <main class="admin-container">
+    <%-- NAVBAR DEDICATA ALL'AMMINISTRATORE --%>
+    <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+        <div class="nav-logo">
+            <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaCatalogo" style="color: white; text-decoration: none; font-weight: bold; font-size: 1.5em;">Tokyo Bites Admin 🍣</a>
+        </div>
+        
+        <ul class="nav-links" style="list-style: none; display: flex; align-items: center; margin: 0; padding: 0;">
+            <li>
+                <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaCatalogo" style="color: yellow; text-decoration: none; margin-left: 20px; font-weight: bold;">
+                    Gestione Catalogo 📋
+                </a>
+            </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaOrdini" style="color: yellow; text-decoration: none; margin-left: 20px; font-weight: bold;">
+                    Visualizza Ordini 📦
+                </a>
+            </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/Logout" style="color: #ff3838; text-decoration: none; margin-left: 20px; font-weight: bold;">
+                    Logout Admin 👤
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="admin-container" style="max-width: 1100px; margin-top: 40px;">
         <h2>Console Amministratore</h2>
         
-        <div class="admin-subnav">
-            <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaCatalogo">Gestione Catalogo</a> | 
-            <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaOrdini">Visualizza Ordini</a> | 
-            <a href="${pageContext.request.contextPath}/Logout" style="color: #ff4d4d;">Logout</a>
-        </div>
-
         <h3 id="form-title">Aggiungi Nuovo Prodotto nel Catalogo</h3>
         
         <form action="${pageContext.request.contextPath}/AdminDashboard" method="post" class="admin-form-inline" style="flex-wrap: wrap; gap: 15px;">
@@ -51,7 +70,6 @@
                 <input type="text" id="descrizione" name="descrizione" placeholder="Inserisci gli ingredienti o i dettagli del piatto..." style="width: 100%;">
             </div>
 
-            <%-- CAMPO: Nome file Immagine --%>
             <div class="form-group" style="width: 100%; min-width: 300px; margin-top: 5px;">
                 <label for="immagine">Nome File Immagine:</label>
                 <input type="text" id="immagine" name="immagine" placeholder="Es. acqua.jpeg (Inserisci il file corrispondente in Eclipse)" style="width: 100%;">
@@ -100,10 +118,8 @@
                                     <td style="color: #ccc; font-size: 0.9rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= descStr %></td>
                                     <td style="color: #ff3838; font-weight: bold;"><%= String.format("%.2f", p.getPrezzo()) %> €</td>
                                     <td><span style="background: #222; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;"><%= p.getCategoria() %></span></td>
-                                    <%-- Mostriamo il nome del file immagine nella tabella --%>
                                     <td style="font-family: monospace; font-size: 0.9rem; color: #00ffcc;"><%= imgStr %></td>
                                     <td>
-                                        <%-- MODIFICATO: Passiamo anche imgStr come ultimo parametro di preparaModifica --%>
                                         <button type="button" class="btn-admin-action" style="background: #ffcc00; color: #000; margin-right: 5px;" 
                                                 onclick="preparaModifica('<%= p.getId() %>', '<%= p.getNome().replace("'", "\\'") %>', '<%= String.format(java.util.Locale.US, "%.2f", p.getPrezzo()) %>', '<%= p.getCategoria() %>', '<%= descStr.replace("'", "\\'") %>', '<%= imgStr.replace("'", "\\'") %>')">
                                             Modifica
