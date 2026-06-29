@@ -4,6 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tokyo Bites - Login &amp; Registrazione</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
 </head>

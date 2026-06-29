@@ -3,6 +3,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizza Ordini - Tokyo Bites</title>
     <%-- Collegamento al foglio di stile CSS globale dell'amministratore --%>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">

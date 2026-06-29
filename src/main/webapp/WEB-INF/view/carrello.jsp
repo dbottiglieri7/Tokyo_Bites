@@ -7,6 +7,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tokyo Bites - Il Tuo Carrello</title>
     <%-- Collegamento al foglio di stile CSS globale --%>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
