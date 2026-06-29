@@ -19,7 +19,9 @@ public class OrdineDAO {
     // Salva l'ordine raggruppando i duplicati e inserendo le righe nel DB in modo transazionale
     public boolean salvaOrdineCompleto(Ordine o, String utenteEmail, String indirizzo, String citta, String cap, Carrello carrello) {
         String queryOrdine = "INSERT INTO ordine (utente_email, totale, data_ordine, stato, indirizzo, citta, cap) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        String queryRiga = "INSERT INTO riga_ordine (id_ordine, id_prodotto, quantita, prezzo_acquisto) VALUES (?, ?, ?, ?)";
+        
+        // CORREZIONE: Usiamo la colonna 'prezzo_acquisto' nativa del DB e la nuova 'nome_archiviato' per congelare il record storico
+        String queryRiga = "INSERT INTO riga_ordine (id_ordine, id_prodotto, quantita, prezzo_acquisto, nome_archiviato) VALUES (?, ?, ?, ?, ?)";
         
         Connection conn = null;
         PreparedStatement psOrdine = null;
@@ -27,7 +29,7 @@ public class OrdineDAO {
         
         try {
             conn = ConnessioneDB.getConnection();
-            conn.setAutoCommit(false);
+            conn.setAutoCommit(false); // Avvia la transazione ACID
             
             // 1. Inserimento della testata dell'ordine
             psOrdine = conn.prepareStatement(queryOrdine, Statement.RETURN_GENERATED_KEYS);
@@ -44,6 +46,7 @@ public class OrdineDAO {
                 throw new SQLException("Impossibile creare l'ordine, nessuna riga inserita.");
             }
             
+            // Recupero dell'ID autogenerato dell'ordine appena creato
             int idOrdineGenerato = -1;
             try (ResultSet generatedKeys = psOrdine.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -63,7 +66,7 @@ public class OrdineDAO {
                 quantitaProdotti.put(idPiatto, quantitaProdotti.getOrDefault(idPiatto, 0) + 1);
             }
             
-            // 3. Inserimento dei dettagli aggregati in riga_ordine
+            // 3. Inserimento dei dettagli aggregati in riga_ordine tramite Batch Processing
             psRiga = conn.prepareStatement(queryRiga);
             
             for (Map.Entry<Integer, Integer> entry : quantitaProdotti.entrySet()) {
@@ -71,29 +74,33 @@ public class OrdineDAO {
                 int quantitaTotale = entry.getValue();
                 Piatto piatto = piattiUnici.get(idPiatto);
                 
-                psRiga.setInt(1, idOrdineGenerato);
-                psRiga.setInt(2, idPiatto);
-                psRiga.setInt(3, quantitaTotale); 
-                psRiga.setDouble(4, piatto.getPrezzo()); 
-                
-                psRiga.addBatch();
+                psRiga.setInt(1, idOrdineGenerato);       // id_ordine
+                psRiga.setInt(2, idPiatto);               // id_prodotto
+                psRiga.setInt(3, quantitaTotale);         // quantita
+                psRiga.setDouble(4, piatto.getPrezzo());  // prezzo_acquisto (Nativo)
+                psRiga.setString(5, piatto.getNome());    // nome_archiviato (Storico)
+
+                psRiga.addBatch(); // Aggiunge il comando al blocco batch
+                // CORREZIONE: Rimosso il secondo psRiga.addBatch() che duplicava i dati inquinando la transazione
             }
             
-            psRiga.executeBatch();
-            conn.commit();
+            psRiga.executeBatch(); // Esegue tutti gli inserimenti in un colpo solo
+            conn.commit();         // Rende persistenti le modifiche nel DB
             return true;
             
         } catch (SQLException e) {
             System.err.println("❌ Errore nella transazione di salvataggio ordine: " + e.getMessage());
             if (conn != null) {
                 try {
-                    conn.rollback();
+                    System.out.println("🔄 Eseguo il Rollback della transazione...");
+                    conn.rollback(); // Annulla tutto in caso di errore per garantire la consistenza
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
             }
             return false;
         } finally {
+            // Chiusura in sicurezza delle risorse JDBC
             try { if (psRiga != null) psRiga.close(); } catch (SQLException e) {}
             try { if (psOrdine != null) psOrdine.close(); } catch (SQLException e) {}
             try { if (conn != null) conn.close(); } catch (SQLException e) {}
@@ -161,7 +168,6 @@ public class OrdineDAO {
         try (Connection conn = ConnessioneDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             
-            // Convertiamo le stringhe del form in Timestamp SQL espliciti
             java.sql.Timestamp inizioTS = java.sql.Timestamp.valueOf(dataInizio + " 00:00:00");
             java.sql.Timestamp fineTS = java.sql.Timestamp.valueOf(dataFine + " 23:59:59");
             
@@ -223,7 +229,7 @@ public class OrdineDAO {
         return lista;
     }
 
-    // 5. NUOVO METODO: Modifica lo stato dell'ordine nel database
+    // 5. Modifica lo stato dell'ordine nel database
     public void doUpdateStato(int idOrdine, String nuovoStato) throws SQLException {
         String query = "UPDATE ordine SET stato = ? WHERE id = ?";
         
@@ -235,16 +241,13 @@ public class OrdineDAO {
         }
     }
 
-    // 6. NUOVO METODO: Recupera la lista dei piatti acquistati all'interno di un ordine (per il tasto Dettagli)
+    // Mostra i dettagli leggendo i dati congelati
     public List<Piatto> doRetrievePiattiByOrdine(int idOrdine) throws SQLException {
         List<Piatto> listaPiatti = new ArrayList<>();
-        // Effettuiamo una JOIN tra la tabella delle righe dell'ordine e la tabella dei piatti/prodotti nel catalogo
-        // NOTA: Se la tua tabella dei piatti non si chiama 'piatto', sostituisci con il nome corretto (es. 'prodotto')
-        String query =
-        	    "SELECT p.nome, ro.prezzo_acquisto, ro.quantita " +
-        	    "FROM riga_ordine ro " +
-        	    "INNER JOIN prodotto p ON ro.id_prodotto = p.id " +
-        	    "WHERE ro.id_ordine = ?";
+        
+        
+        // Se un piatto viene eliminato dal catalogo, i dettagli del vecchio ordine rimarranno leggibili
+        String query = "SELECT nome_archiviato, prezzo_acquisto, quantita FROM riga_ordine WHERE id_ordine = ?";
         
         try (Connection conn = ConnessioneDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
@@ -253,9 +256,16 @@ public class OrdineDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Piatto p = new Piatto();
-                    // Gestiamo la quantità moltiplicandola o inserendola nel nome per visualizzarla nel Pop-up JSON
                     int quantita = rs.getInt("quantita");
-                    p.setNome(rs.getString("nome") + " (x" + quantita + ")");
+                    
+                    // Se per i vecchi ordini antecedenti alla modifica il 'nome_archiviato' fosse NULL, 
+                    // mettiamo un valore di fallback per non rompere la grafica
+                    String nomeProdotto = rs.getString("nome_archiviato");
+                    if (nomeProdotto == null) {
+                        nomeProdotto = "Prodotto Storico (Catalogo Aggiornato)";
+                    }
+                    
+                    p.setNome(nomeProdotto + " (x" + quantita + ")");
                     p.setPrezzo(rs.getDouble("prezzo_acquisto"));
                     listaPiatti.add(p);
                 }
