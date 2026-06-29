@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard - Tokyo Bites</title>
+    <%-- Collegamento al foglio di stile CSS centralizzato per l'area amministrativa --%>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
 </head>
 <body>
@@ -11,15 +12,20 @@
     <main class="admin-container">
         <h2>Console Amministratore</h2>
         
+        <%-- SEZIONE DI SOTTO-NAVIGAZIONE PANNELLO ADMIN --%>
         <div class="admin-subnav">
             <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaCatalogo">Gestione Catalogo</a> | 
             <a href="${pageContext.request.contextPath}/AdminDashboard?azione=visualizzaOrdini">Visualizza Ordini</a> | 
             <a href="${pageContext.request.contextPath}/Logout" style="color: #ff4d4d;">Logout</a>
         </div>
 
+        <%-- TITOLO DINAMICO: Viene modificato da JavaScript quando si passa dallo stato di "Inserimento" a quello di "Modifica" --%>
         <h3 id="form-title">Aggiungi Nuovo Prodotto nel Catalogo</h3>
         
+        <%-- FORM DI INSERIMENTO / MODIFICA PRODOTTO --%>
         <form action="${pageContext.request.contextPath}/AdminDashboard" method="post" class="admin-form-inline" style="flex-wrap: wrap; gap: 15px;">
+            
+            <%-- Parametri nascosti (hidden inputs) necessari alla Servlet per identificare il tipo di operazione (operazione di inserimento vs modifica) e l'ID del record interessato --%>
             <input type="hidden" id="form-azione" name="azione" value="inserisci">
             <input type="hidden" id="form-id" name="idPiatto" value="">
             
@@ -50,10 +56,12 @@
                 <input type="text" id="descrizione" name="descrizione" placeholder="Inserisci gli ingredienti o i dettagli del piatto..." style="width: 100%;">
             </div>
             
+            <%-- PULSANTI DI CONFERMA E RESET --%>
             <div style="width: 100%; display: flex; gap: 10px; margin-top: 10px;">
                 <button type="submit" id="btn-submit" class="btn-login" style="width: auto; padding: 11px 25px;">
                     Inserisci Piatto
                 </button>
+                <%-- Il pulsante Annulla invoca la funzione JS resettaForm() per ripristinare il form allo stato iniziale di inserimento --%>
                 <button type="button" id="btn-annulla" class="btn-admin-action" style="display: none; background: #555;" onclick="resettaForm()">
                     Annulla Modifica
                 </button>
@@ -62,6 +70,7 @@
 
         <h3>Catalogo Attuale</h3>
         
+        <%-- TABELLA VISUALIZZAZIONE COMPONENTI DEL CATALOGO --%>
         <div class="admin-table-wrapper">
             <table class="admin-table">
                 <thead>
@@ -76,10 +85,12 @@
                 </thead>
                 <tbody>
                     <%
+                        // Estrazione della lista dei prodotti inserita come attributo di richiesta (Request Attribute) dal Controller
                         Object catalogoObj = request.getAttribute("catalogo");
                         if (catalogoObj instanceof java.util.List) {
                             java.util.List<?> catalogo = (java.util.List<?>) catalogoObj;
                             if (!catalogo.isEmpty()) {
+                                // Ciclo iterativo per scorrere i Java Beans di tipo Piatto recuperati dal database tramite pattern DAO
                                 for (Object obj : catalogo) {
                                     if (obj instanceof model.Piatto) {
                                         model.Piatto p = (model.Piatto) obj;
@@ -88,15 +99,22 @@
                                 <tr>
                                     <td><strong><%= p.getId() %></strong></td>
                                     <td><%= p.getNome() %></td>
+                                    <%-- Gestione visiva della stringa descrizione: troncamento con ellissi se supera la larghezza massima stabilita --%>
                                     <td style="color: #ccc; font-size: 0.9rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= descStr %></td>
                                     <td style="color: #ff3838; font-weight: bold;"><%= String.format("%.2f", p.getPrezzo()) %> €</td>
                                     <td><span style="background: #222; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;"><%= p.getCategoria() %></span></td>
                                     <td>
+                                        <%-- 
+                                          PULSANTE MODIFICA: Invoca la funzione JavaScript 'preparaModifica' definita nello script esterno.
+                                          I dati del record corrente vengono passati come parametri per popolare istantaneamente i campi del form in alto.
+                                          Viene eseguito l'escape preventivo dei caratteri di apice singolo per evitare errori di sintassi JavaScript.
+                                        --%>
                                         <button type="button" class="btn-admin-action" style="background: #ffcc00; color: #000; margin-right: 5px;" 
                                                 onclick="preparaModifica('<%= p.getId() %>', '<%= p.getNome().replace("'", "\\'") %>', '<%= String.format(java.util.Locale.US, "%.2f", p.getPrezzo()) %>', '<%= p.getCategoria() %>', '<%= descStr.replace("'", "\\'") %>')">
                                             Modifica
                                         </button>
                                         
+                                        <%-- FORM DI ELIMINAZIONE PRODOTTO: Invia una richiesta POST alla Servlet impostando l'azione di rimozione sul relativo ID --%>
                                         <form action="${pageContext.request.contextPath}/AdminDashboard" method="post" style="display:inline;">
                                             <input type="hidden" name="azione" value="cancella">
                                             <input type="hidden" name="idPiatto" value="<%= p.getId() %>">
@@ -129,41 +147,7 @@
         </div>
     </main>
 
-    <script>
-        function preparaModifica(id, nome, prezzo, categoria, descrizione) {
-            document.getElementById('form-title').innerText = "Modifica Prodotto (ID: " + id + ")";
-            document.getElementById('form-azione').value = "modifica";
-            document.getElementById('form-id').value = id;
-            
-            document.getElementById('nome').value = nome;
-            document.getElementById('prezzo').value = prezzo;
-            document.getElementById('categoria').value = categoria;
-            document.getElementById('descrizione').value = descrizione;
-            
-            document.getElementById('btn-submit').innerText = "Salva Modifiche";
-            document.getElementById('btn-submit').style.background = "#ffcc00";
-            document.getElementById('btn-submit').style.color = "#000";
-            document.getElementById('btn-annulla').style.display = "inline-block";
-            
-            // Rimanda lo scroll in alto per focalizzare il form
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        function resettaForm() {
-            document.getElementById('form-title').innerText = "Aggiungi Nuovo Prodotto nel Catalogo";
-            document.getElementById('form-azione').value = "inserisci";
-            document.getElementById('form-id').value = "";
-            
-            document.getElementById('nome').value = "";
-            document.getElementById('prezzo').value = "";
-            document.getElementById('categoria').selectedIndex = 0;
-            document.getElementById('descrizione').value = "";
-            
-            document.getElementById('btn-submit').innerText = "Inserisci Piatto";
-            document.getElementById('btn-submit').style.background = ""; 
-            document.getElementById('btn-submit').style.color = "";
-            document.getElementById('btn-annulla').style.display = "none";
-        }
-    </script>
+    <%-- INCLUSIONE DEL FILE JAVASCRIPT ESTERNO DEDICATO ALLA MODIFICA DI UN PIATTO --%>
+	<script src="${pageContext.request.contextPath}/scripts/admin-dashboard.js"></script>
 </body>
 </html>
