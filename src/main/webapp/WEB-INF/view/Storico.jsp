@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="model.Ordine" %>
 <%@ page import="model.Carrello" %>
+<%@ page import="model.Piatto" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,10 +24,10 @@
             <li><a href="${pageContext.request.contextPath}/Home" style="color: white; text-decoration: none; margin-left: 20px;">Home 🏠</a></li>
             <li><a href="${pageContext.request.contextPath}/Menu" style="color: white; text-decoration: none; margin-left: 20px;">Menu 🍣</a></li>
             <li>
-    <a href="${pageContext.request.contextPath}/Carrello" style="color: white; text-decoration: none; margin-left: 20px;">
-        Carrello 🛒 <span style="background: #ff3838; color: white; padding: 2px 7px; border-radius: 50%; font-size: 0.85rem; font-weight: bold; margin-left: 3px;"><%= totaleElementiCarrello %></span>
-    </a>
-</li>
+                <a href="${pageContext.request.contextPath}/Carrello" style="color: white; text-decoration: none; margin-left: 20px;">
+                    Carrello 🛒 <span style="background: #ff3838; color: white; padding: 2px 7px; border-radius: 50%; font-size: 0.85rem; font-weight: bold; margin-left: 3px;"><%= totaleElementiCarrello %></span>
+                </a>
+            </li>
             
             <%
                 String utente = (String) session.getAttribute("utenteLoggato");
@@ -44,7 +45,6 @@
         <h1 class="menu-title" style="color: yellow !important; text-align: left; border-bottom: 2px solid #ff3838; padding-bottom: 10px;">Il Tuo Storico Ordini 📜</h1>
 
         <%
-            // Recupero sicuro della lista ordini passata dalla Servlet
             List<Ordine> listaOrdini = (List<Ordine>) request.getAttribute("listaOrdini");
             if (listaOrdini == null || listaOrdini.isEmpty()) {
         %>
@@ -68,7 +68,7 @@
                 </thead>
                 <tbody>
                     <% for (Ordine ordine : listaOrdini) { %>
-                        <tr style="border-bottom: 1px solid #333;">
+                        <tr style="border-bottom: 1px solid #333; background-color: rgba(255, 255, 255, 0.02);">
                             <td style="padding: 15px; font-weight: bold;">#<%= ordine.getId() %></td>
                             <td style="padding: 15px; color: #ccc;"><%= ordine.getDataOrdine() %></td>
                             <td style="padding: 15px; font-size: 0.95rem;">
@@ -81,6 +81,28 @@
                             </td>
                             <td style="padding: 15px; text-align: right; color: #2ecc71; font-weight: bold; font-size: 1.1rem;">
                                 <%= String.format("%.2f", ordine.getTotale()) %> €
+                            </td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #444; background-color: rgba(0, 0, 0, 0.2);">
+                            <td colspan="5" style="padding: 10px 20px;">
+                                <div style="font-size: 0.9rem; color: #bbb; padding-bottom: 5px;"><strong>Dettaglio Piatti Ordinati:</strong></div>
+                                <ul style="list-style: none; padding: 0; margin: 0;">
+                                    <% 
+                                        List<Piatto> piattiOrdinati = (List<Piatto>) request.getAttribute("piatti_ordine_" + ordine.getId());
+                                        if (piattiOrdinati != null && !piattiOrdinati.isEmpty()) {
+                                            for (Piatto p : piattiOrdinati) {
+                                    %>
+                                                <li style="padding: 4px 0; display: flex; justify-content: space-between; border-bottom: 1px dashed #333; font-size: 0.9rem;">
+                                                    <span>• <%= p.getNome() %></span>
+                                                    <span style="color: #aaa;"><%= String.format("%.2f", p.getPrezzo()) %> €</span>
+                                                </li>
+                                    <% 
+                                            }
+                                        } else {
+                                    %>
+                                            <li style="color: #777; font-style: italic;">Nessun dettaglio disponibile per questo ordine.</li>
+                                    <% } %>
+                                </ul>
                             </td>
                         </tr>
                     <% } %>

@@ -3,6 +3,7 @@ package control;
 import dao.OrdineDAO;
 import model.Utente;
 import model.Ordine;
+import model.Piatto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/StoricoOrdini")
@@ -22,19 +24,27 @@ public class StoricoOrdiniServlet extends HttpServlet {
         String utenteLoggato = (String) session.getAttribute("utenteLoggato");
         Utente utenteCompleto = (Utente) session.getAttribute("utenteCompleto");
 
-        // Controllo degli accessi (Requisito Token/Sessione del professore)
         if (utenteLoggato == null || utenteCompleto == null) {
             response.sendRedirect(request.getContextPath() + "/Login");
             return;
         }
 
-        // Recuperiamo gli ordini dal database tramite l'email dell'utente
-        List<Ordine> ordini = ordineDAO.getOrdiniByUtente(utenteCompleto.getEmail());
+        try {
+            List<Ordine> ordini = ordineDAO.getOrdiniByUtente(utenteCompleto.getEmail());
+            
+            if (ordini != null) {
+                for (Ordine o : ordini) {
+                    List<Piatto> piatti = ordineDAO.doRetrievePiattiByOrdine(o.getId());
+                    request.setAttribute("piatti_ordine_" + o.getId(), piatti);
+                }
+            }
+            
+            request.setAttribute("listaOrdini", ordini);
+            
+        } catch (SQLException e) {
+            throw new ServletException(e);
+        }
         
-        // Passiamo la lista alla JSP tramite la request
-        request.setAttribute("listaOrdini", ordini);
-        
-        // Inoltro alla vista nascosta in WEB-INF (Requisito del professore)
         request.getRequestDispatcher("/WEB-INF/view/Storico.jsp").forward(request, response);
     }
 
