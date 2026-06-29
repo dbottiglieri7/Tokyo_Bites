@@ -64,14 +64,14 @@
         
         <%-- BOTTONI DELLE CATEGORIE: Se la categoria del bottone corrisponde a quella attuale, aggiunge la classe CSS "active" per colorarlo --%>
         <div class="categories-tabs">
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Sushi e Sashimi" class="tab <%= catAttuale.equalsIgnoreCase("Sushi e Sashimi") ? "active" : "" %>">Sushi & Sashimi</a>
-            <a href="${pageContext.request.contextPath}/Menu?categoria=SushiRoll" class="tab <%= catAttuale.equalsIgnoreCase("SushiRoll") ? "active" : "" %>">Sushi Roll</a>
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Ravioli e Sfizi" class="tab <%= catAttuale.equalsIgnoreCase("Ravioli e Sfizi") ? "active" : "" %>">Ravioli & Sfizi</a>
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Primi Piatti" class="tab <%= catAttuale.equalsIgnoreCase("Primi Piatti") ? "active" : "" %>">Primi Piatti</a>
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Noodles" class="tab <%= catAttuale.equalsIgnoreCase("Noodles") ? "active" : "" %>">Noodles</a>
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Antipasti" class="tab <%= catAttuale.equalsIgnoreCase("Antipasti") ? "active" : "" %>">Antipasti</a>
-            <a href="${pageContext.request.contextPath}/Menu?categoria=Bevande" class="tab <%= catAttuale.equalsIgnoreCase("Bevande") ? "active" : "" %>">Bevande</a>
-        </div>
+		    <a href="${pageContext.request.contextPath}/Menu?categoria=Sushi%20e%20Sashimi" class="tab <%= catAttuale.equals("Sushi e Sashimi") ? "active" : "" %>">Sushi e Sashimi</a>
+		    <a href="${pageContext.request.contextPath}/Menu?categoria=SushiRoll" class="tab <%= catAttuale.equals("SushiRoll") ? "active" : "" %>">SushiRoll</a>
+		    <a href="${pageContext.request.contextPath}/Menu?categoria=Ravioli%20e%20Sfizi" class="tab <%= catAttuale.equals("Ravioli e Sfizi") ? "active" : "" %>">Ravioli e Sfizi</a>
+		    <a href="${pageContext.request.contextPath}/Menu?categoria=Primi%20Piatti" class="tab <%= catAttuale.equals("Primi Piatti") ? "active" : "" %>">Primi Piatti</a>
+		    <a href="${pageContext.request.contextPath}/Menu?categoria=Noodles" class="tab <%= catAttuale.equals("Noodles") ? "active" : "" %>">Noodles</a>
+		    <a href="${pageContext.request.contextPath}/Menu?categoria=Antipasti" class="tab <%= catAttuale.equals("Antipasti") ? "active" : "" %>">Antipasti</a>
+		    <a href="${pageContext.request.contextPath}/Menu?categoria=Bevande" class="tab <%= catAttuale.equals("Bevande") ? "active" : "" %>">Bevande</a>
+		</div>
 
         <%-- BARRA DI RICERCA: Ogni volta che l'utente scrive una lettera (oninput), parte la funzione JS per nascondere i piatti che non c'entrano --%>
         <div class="search-container">

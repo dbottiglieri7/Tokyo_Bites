@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Tokyo Bites - Login & Registrazione</title>
+    <title>Tokyo Bites - Login &amp; Registrazione</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/style.css">
 </head>
 <body>
