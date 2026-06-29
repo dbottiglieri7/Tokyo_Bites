@@ -2,7 +2,7 @@
  * Questa funzione serve quando l'amministratore clicca sul tasto "Modifica" di un piatto.
  * Invece di far cambiare pagina, prende i dati del piatto e li scrive dentro i campi del form in alto.
  */
-function preparaModifica(id, nome, prezzo, categoria, descrizione) {
+function preparaModifica(id, nome, prezzo, categoria, descrizione, immagine) {
     // Cambia il titolo del form per far capire che stiamo modificando
     document.getElementById('form-title').innerText = "Modifica Prodotto (ID: " + id + ")";
     
@@ -11,10 +11,11 @@ function preparaModifica(id, nome, prezzo, categoria, descrizione) {
     document.getElementById('form-id').value = id;
     
     // Inserisce i dati attuali del piatto nei quadratini di testo (input)
-    document.getElementById('nome').value = nome;
-    document.getElementById('prezzo').value = prezzo;
-    document.getElementById('categoria').value = categoria;
-    document.getElementById('descrizione').value = descrizione;
+    document.getElementById('nome').value = nome;     				// Popola il campo nome
+    document.getElementById('prezzo').value = prezzo; 				// Popola il campo prezzo
+    document.getElementById('categoria').value = categoria; 		// Popola il campo categoria
+    document.getElementById('descrizione').value = descrizione; 	// Popola il campo descrizione
+    document.getElementById('immagine').value = immagine; 			// Popola il campo immagine
     
     // Trasforma il bottone d'invio in un tasto giallo con scritto "Salva Modifiche"
     document.getElementById('btn-submit').innerText = "Salva Modifiche";
@@ -45,6 +46,7 @@ function resettaForm() {
     document.getElementById('prezzo').value = "";
     document.getElementById('categoria').selectedIndex = 0; // Rimette la prima opzione della lista
     document.getElementById('descrizione').value = "";
+    document.getElementById('immagine').value = ""; // <-- AGGIUNTO: Svuota il campo immagine
     
     // Rimette il bottone d'invio allo stato iniziale (colore di default e testo originale)
     document.getElementById('btn-submit').innerText = "Inserisci Piatto";

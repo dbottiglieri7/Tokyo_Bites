@@ -124,12 +124,14 @@ public class AdminServlet extends HttpServlet {
                 double prezzo = Double.parseDouble(request.getParameter("prezzo"));
                 String categoria = request.getParameter("categoria");
                 String descrizione = request.getParameter("descrizione");
+                String immagine = request.getParameter("immagine"); // <-- AGGIUNTO: Legge l'immagine dal form
                 
                 Piatto nuovoPiatto = new Piatto();
                 nuovoPiatto.setNome(nome);
                 nuovoPiatto.setPrezzo(prezzo);
                 nuovoPiatto.setCategoria(categoria);
                 nuovoPiatto.setDescrizione(descrizione);
+                nuovoPiatto.setImmagine(immagine); // <-- AGGIUNTO: Imposta l'immagine nel bean
                 
                 piattoDAO.doSave(nuovoPiatto);
                 response.sendRedirect(request.getContextPath() + "/AdminDashboard?azione=visualizzaCatalogo");
@@ -140,6 +142,7 @@ public class AdminServlet extends HttpServlet {
                 double prezzo = Double.parseDouble(request.getParameter("prezzo"));
                 String categoria = request.getParameter("categoria");
                 String descrizione = request.getParameter("descrizione");
+                String immagine = request.getParameter("immagine"); // <-- AGGIUNTO: Legge l'immagine modificata dal form
                 
                 Piatto piattoModificato = new Piatto();
                 piattoModificato.setId(id);
@@ -147,6 +150,7 @@ public class AdminServlet extends HttpServlet {
                 piattoModificato.setPrezzo(prezzo);
                 piattoModificato.setCategoria(categoria);
                 piattoModificato.setDescrizione(descrizione);
+                piattoModificato.setImmagine(immagine); // <-- AGGIUNTO: Imposta l'immagine aggiornata nel bean
                 
                 piattoDAO.doUpdate(piattoModificato);
                 response.sendRedirect(request.getContextPath() + "/AdminDashboard?azione=visualizzaCatalogo");
@@ -157,7 +161,6 @@ public class AdminServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/AdminDashboard?azione=visualizzaCatalogo");
                 
             } else if ("modificaStato".equals(azione)) {
-                // MODIFICA RICHIESTA: Gestione dello stato tramite risposta testuale asincrona
                 int idOrdine = Integer.parseInt(request.getParameter("idOrdine"));
                 String nuovoStato = request.getParameter("nuovoStato");
 
@@ -166,7 +169,7 @@ public class AdminServlet extends HttpServlet {
                 response.setContentType("text/plain");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().print("OK");
-                return; // Interrompe il flusso per non fare redirect o rimandare HTML inutile
+                return;
             }
             
         } catch (SQLException e) {
