@@ -46,7 +46,7 @@ function resettaForm() {
     document.getElementById('prezzo').value = "";
     document.getElementById('categoria').selectedIndex = 0; // Rimette la prima opzione della lista
     document.getElementById('descrizione').value = "";
-    document.getElementById('immagine').value = ""; // <-- AGGIUNTO: Svuota il campo immagine
+    document.getElementById('immagine').value = ""; //Svuota il campo immagine
     
     // Rimette il bottone d'invio allo stato iniziale (colore di default e testo originale)
     document.getElementById('btn-submit').innerText = "Inserisci Piatto";

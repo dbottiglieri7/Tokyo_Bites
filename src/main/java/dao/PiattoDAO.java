@@ -134,22 +134,24 @@ public class PiattoDAO {
         }
     }
 
-    // Modifica un piatto esistente includendo la descrizione (Update)
+ // Modifica un piatto esistente
     public void doUpdate(Piatto piatto) throws SQLException {
-        String query = "UPDATE prodotto SET nome = ?, descrizione = ?, prezzo = ?, categoria = ? WHERE id = ?";
+        // AGGIORNATO: Aggiunto immagine = ? nella query SQL
+        String query = "UPDATE prodotto SET nome = ?, descrizione = ?, prezzo = ?, categoria = ?, immagine = ? WHERE id = ?";
         try (Connection conn = ConnessioneDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, piatto.getNome());
             ps.setString(2, piatto.getDescrizione() != null ? piatto.getDescrizione() : "");
             ps.setDouble(3, piatto.getPrezzo());
             ps.setString(4, piatto.getCategoria());
-            ps.setInt(5, piatto.getId());
+            ps.setString(5, piatto.getImmagine() != null ? piatto.getImmagine() : "default.png"); // <-- AGGIUNTO
+            ps.setInt(6, piatto.getId()); // <-- Spostato al sesto parametro
             ps.executeUpdate();
             System.out.println("PiattoDAO: Piatto con ID " + piatto.getId() + " aggiornato con successo nel DB.");
         }
     }
 
-    // Cancella un piatto (Delete) 
+    // Cancella un piatto (Se non è legato a nessun ordine, altrimenti usa un flag attivo/disattivo)
     public void doDeleteLogico(int id) throws SQLException {
         String query = "DELETE FROM prodotto WHERE id = ?"; 
         try (Connection conn = ConnessioneDB.getConnection();

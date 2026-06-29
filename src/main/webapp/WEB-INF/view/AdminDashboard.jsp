@@ -141,6 +141,6 @@
         </div>
     </main>
 
-	<script src="${pageContext.request.contextPath}/scripts/admin-dashboard.js"></script>
+	<script src="${pageContext.request.contextPath}/scripts/Admin-Dashboard.js"></script>
 </body>
 </html>
