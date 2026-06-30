@@ -19,7 +19,6 @@ import java.util.Date;
 @WebServlet("/ConfermaOrdine")
 public class ConfermaOrdineServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private OrdineDAO ordineDAO = new OrdineDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -38,6 +37,11 @@ public class ConfermaOrdineServlet extends HttpServlet {
         String utenteLoggato = (String) session.getAttribute("utenteLoggato");
         Carrello carrello = (Carrello) session.getAttribute("carrello");
         Utente utenteCompleto = (Utente) session.getAttribute("utenteCompleto");
+        
+        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
+        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
+        // 2. Istanziato il DAO passandogli il DataSource appena preso
+        OrdineDAO ordineDAO = new OrdineDAO(ds);
 
         if (utenteLoggato == null || carrello == null || carrello.getElementi().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/Menu");

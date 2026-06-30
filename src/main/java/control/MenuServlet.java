@@ -2,7 +2,6 @@ package control;
 
 import model.Piatto;
 import dao.PiattoDAO;
-
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,11 +14,15 @@ import java.util.List;
 @WebServlet("/Menu")
 public class MenuServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private PiattoDAO piattoDAO = new PiattoDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 1. Lettura della categoria dall'URL
         String categoriaSelezionata = request.getParameter("categoria");
+        
+        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
+        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
+        //Istanziato il DAO passandogli il DataSource appena preso
+        PiattoDAO piattoDAO = new PiattoDAO(ds);
         
         // 2. CORREZIONE LOGICA: Se è null, vuota o non valida, mostriamo una categoria ricca di default
         if (categoriaSelezionata == null || categoriaSelezionata.trim().isEmpty()) {

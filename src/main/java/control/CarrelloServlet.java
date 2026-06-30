@@ -32,6 +32,10 @@ public class CarrelloServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         Carrello carrello = (Carrello) session.getAttribute("carrello");
+        
+        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
+        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
+        
         if (carrello == null) {
             carrello = new Carrello();
             session.setAttribute("carrello", carrello);
@@ -60,7 +64,7 @@ public class CarrelloServlet extends HttpServlet {
 
         } else {
             int idPiatto = Integer.parseInt(request.getParameter("idPiatto"));
-            PiattoDAO dao = new PiattoDAO();
+            PiattoDAO dao = new PiattoDAO(ds);
             try {
                 Piatto piatto = dao.doRetrieveByKey(idPiatto);
                 if (piatto != null) {

@@ -19,11 +19,15 @@ import java.util.List;
 @WebServlet("/AdminDashboard")
 public class AdminServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private PiattoDAO piattoDAO = new PiattoDAO();
-    private OrdineDAO ordineDAO = new OrdineDAO();
-
+    
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
+        
+        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
+        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
+        //Istanziato il DAO passandogli il DataSource appena preso
+        PiattoDAO piattoDAO = new PiattoDAO(ds);
+        OrdineDAO ordineDAO = new OrdineDAO(ds);
         
         // 1. Controllo Accessi
         String ruolo = (String) session.getAttribute("ruoloUtente");
@@ -111,6 +115,14 @@ public class AdminServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         String ruolo = (String) session.getAttribute("ruoloUtente");
+        
+        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
+        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
+        //Istanziato il DAO passandogli il DataSource appena preso
+        PiattoDAO piattoDAO = new PiattoDAO(ds);
+        OrdineDAO ordineDAO = new OrdineDAO(ds);
+        
+        
         if (ruolo == null || !ruolo.equals("admin")) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;

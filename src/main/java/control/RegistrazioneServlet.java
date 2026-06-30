@@ -13,13 +13,17 @@ import model.Utente;
 @WebServlet("/RegistrazioneServlet")
 public class RegistrazioneServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private UtenteDAO utenteDAO = new UtenteDAO();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String nome = request.getParameter("nome");
         String cognome = request.getParameter("cognome");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+        
+        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
+        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
+        // 2. Istanziato il DAO passandogli il DataSource appena preso
+        UtenteDAO utenteDAO = new UtenteDAO(ds);
 
         // Creiamo l'utente usando il costruttore vuoto + i setter
         Utente nuovoUtente = new Utente();

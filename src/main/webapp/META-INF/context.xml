@@ -3,7 +3,7 @@
     <Resource 
         name="jdbc/tokyobites" 
         auth="Container" 
-        type="jakarta.sql.DataSource"
+        type="javax.sql.DataSource"
         driverClassName="com.mysql.cj.jdbc.Driver"
         url="jdbc:mysql://localhost:3306/tokyobites?allowPublicKeyRetrieval=true&amp;useSSL=false"
         username="root" 

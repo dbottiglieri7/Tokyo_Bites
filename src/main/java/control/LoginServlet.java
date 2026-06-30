@@ -18,8 +18,6 @@ public class LoginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private UtenteDAO utenteDAO = new UtenteDAO();
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -33,7 +31,12 @@ public class LoginServlet extends HttpServlet {
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-
+        
+        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
+        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
+        // 2. Istanziato il DAO passandogli il DataSource appena preso
+        UtenteDAO utenteDAO = new UtenteDAO(ds);
+        
         // Validazione lato server
         if (email == null || email.trim().isEmpty()
                 || password == null || password.trim().isEmpty()) {

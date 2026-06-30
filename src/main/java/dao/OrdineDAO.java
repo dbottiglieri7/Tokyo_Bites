@@ -12,9 +12,17 @@ import java.util.Map;
 import model.Carrello;
 import model.Piatto;
 import model.Ordine;
-import utils.ConnessioneDB;
+import javax.sql.DataSource; // Import fondamentale per gestire il Pool di connessioni di Tomcat 11
 
 public class OrdineDAO {
+
+    // Riferimento al DataSource locale del DAO
+    private DataSource ds;
+
+    // Costruttore che accetta il DataSource passato dalla Servlet all'atto dell'istanza
+    public OrdineDAO(DataSource ds) {
+        this.ds = ds;
+    }
 
     // Salva l'ordine raggruppando i duplicati e inserendo le righe nel DB in modo transazionale
     public boolean salvaOrdineCompleto(Ordine o, String utenteEmail, String indirizzo, String citta, String cap, Carrello carrello) {
@@ -28,7 +36,14 @@ public class OrdineDAO {
         PreparedStatement psRiga = null;
         
         try {
-            conn = ConnessioneDB.getConnection();
+            // Otteniamo la connessione dal DataSource locale fornito dal Container
+            if (this.ds != null) {
+                conn = this.ds.getConnection();
+            } else {
+                System.err.println("❌ Errore: Il DataSource nel DAO è nullo.");
+                return false;
+            }
+            
             conn.setAutoCommit(false); // Avvia la transazione ACID
             
             // 1. Inserimento della testata dell'ordine
@@ -81,7 +96,6 @@ public class OrdineDAO {
                 psRiga.setString(5, piatto.getNome());    // nome_archiviato (Storico)
 
                 psRiga.addBatch(); // Aggiunge il comando al blocco batch
-                // CORREZIONE: Rimosso il secondo psRiga.addBatch() che duplicava i dati inquinando la transazione
             }
             
             psRiga.executeBatch(); // Esegue tutti gli inserimenti in un colpo solo
@@ -100,7 +114,7 @@ public class OrdineDAO {
             }
             return false;
         } finally {
-            // Chiusura in sicurezza delle risorse JDBC
+            // Chiusura in sicurezza delle risorse JDBC (Le connessioni tornano nel Pool)
             try { if (psRiga != null) psRiga.close(); } catch (SQLException e) {}
             try { if (psOrdine != null) psOrdine.close(); } catch (SQLException e) {}
             try { if (conn != null) conn.close(); } catch (SQLException e) {}
@@ -112,8 +126,11 @@ public class OrdineDAO {
         List<Ordine> lista = new ArrayList<>();
         String query = "SELECT * FROM ordine WHERE utente_email = ? ORDER BY data_ordine DESC";
         
-        try (Connection conn = ConnessioneDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        // Uso del Try-With-Resources ottenendo la connessione dal DataSource locale
+        try (Connection conn = (this.ds != null) ? this.ds.getConnection() : null;
+             PreparedStatement ps = (conn != null) ? conn.prepareStatement(query) : null) {
+            
+            if (ps == null) throw new SQLException("Impossibile connettersi al database (DataSource nullo).");
             
             ps.setString(1, utenteEmail);
             try (ResultSet rs = ps.executeQuery()) {
@@ -149,7 +166,7 @@ public class OrdineDAO {
         List<Ordine> lista = new ArrayList<>();
         String query = "SELECT * FROM ordine ORDER BY data_ordine DESC";
         
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -165,7 +182,7 @@ public class OrdineDAO {
         List<Ordine> lista = new ArrayList<>();
         String query = "SELECT * FROM ordine WHERE data_ordine BETWEEN ? AND ? ORDER BY data_ordine DESC";
         
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             
             java.sql.Timestamp inizioTS = java.sql.Timestamp.valueOf(dataInizio + " 00:00:00");
@@ -190,7 +207,7 @@ public class OrdineDAO {
         List<Ordine> lista = new ArrayList<>();
         String query = "SELECT * FROM ordine WHERE utente_email = ? ORDER BY data_ordine DESC";
         
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, emailCliente);
             
@@ -208,7 +225,7 @@ public class OrdineDAO {
         List<Ordine> lista = new ArrayList<>();
         String query = "SELECT * FROM ordine WHERE (data_ordine BETWEEN ? AND ?) AND utente_email = ? ORDER BY data_ordine DESC";
         
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             
             java.sql.Timestamp inizioTS = java.sql.Timestamp.valueOf(dataInizio + " 00:00:00");
@@ -233,7 +250,7 @@ public class OrdineDAO {
     public void doUpdateStato(int idOrdine, String nuovoStato) throws SQLException {
         String query = "UPDATE ordine SET stato = ? WHERE id = ?";
         
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, nuovoStato);
             ps.setInt(2, idOrdine);
@@ -244,12 +261,9 @@ public class OrdineDAO {
     // Mostra i dettagli leggendo i dati congelati
     public List<Piatto> doRetrievePiattiByOrdine(int idOrdine) throws SQLException {
         List<Piatto> listaPiatti = new ArrayList<>();
-        
-        
-        // Se un piatto viene eliminato dal catalogo, i dettagli del vecchio ordine rimarranno leggibili
         String query = "SELECT nome_archiviato, prezzo_acquisto, quantita FROM riga_ordine WHERE id_ordine = ?";
         
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, idOrdine);
             
@@ -258,8 +272,6 @@ public class OrdineDAO {
                     Piatto p = new Piatto();
                     int quantita = rs.getInt("quantita");
                     
-                    // Se per i vecchi ordini antecedenti alla modifica il 'nome_archiviato' fosse NULL, 
-                    // mettiamo un valore di fallback per non rompere la grafica
                     String nomeProdotto = rs.getString("nome_archiviato");
                     if (nomeProdotto == null) {
                         nomeProdotto = "Prodotto Storico (Catalogo Aggiornato)";

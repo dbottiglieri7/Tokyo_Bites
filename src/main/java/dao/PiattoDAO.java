@@ -7,18 +7,28 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Piatto;
-import utils.ConnessioneDB;
+import javax.sql.DataSource; // Import necessario per la gestione JNDI / Tomcat 11
 
 public class PiattoDAO {
+
+    // Riferimento al DataSource locale del DAO
+    private DataSource ds;
+
+    // Costruttore che riceve il DataSource dalla Servlet
+    public PiattoDAO(DataSource ds) {
+        this.ds = ds;
+    }
 
     // Recupera TUTTI i piatti dal database
     public List<Piatto> getAllPiatti() {
         List<Piatto> lista = new ArrayList<>();
         String query = "SELECT * FROM prodotto";
 
-        try (Connection conn = ConnessioneDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = (this.ds != null) ? this.ds.getConnection() : null;
+             PreparedStatement ps = (conn != null) ? conn.prepareStatement(query) : null;
+             ResultSet rs = (ps != null) ? ps.executeQuery() : null) {
+
+            if (rs == null) throw new SQLException("Impossibile connettersi al database (DataSource nullo).");
 
             while (rs.next()) {
                 Piatto p = new Piatto();
@@ -38,13 +48,15 @@ public class PiattoDAO {
         return lista;
     }
 
-    // NUOVO/RIPRISTINATO: Recupera i piatti filtrati per categoria (richiesto dal main)
+    // Recupera i piatti filtrati per categoria
     public List<Piatto> getPiattiByCategoria(String categoria) {
         List<Piatto> lista = new ArrayList<>();
         String query = "SELECT * FROM prodotto WHERE categoria = ?";
 
-        try (Connection conn = ConnessioneDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        try (Connection conn = (this.ds != null) ? this.ds.getConnection() : null;
+             PreparedStatement ps = (conn != null) ? conn.prepareStatement(query) : null) {
+            
+            if (ps == null) throw new SQLException("Impossibile connettersi al database (DataSource nullo).");
             
             ps.setString(1, categoria);
             try (ResultSet rs = ps.executeQuery()) {
@@ -74,7 +86,7 @@ public class PiattoDAO {
             "INNER JOIN prodotto p ON ro.id_prodotto = p.id " +
             "WHERE ro.id_ordine = ?";
 
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setInt(1, idOrdine);
@@ -95,7 +107,7 @@ public class PiattoDAO {
     public Piatto doRetrieveByKey(int id) throws SQLException {
         String query = "SELECT * FROM prodotto WHERE id = ?";
         
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             
             ps.setInt(1, id);
@@ -122,7 +134,7 @@ public class PiattoDAO {
     // Inserisce un nuovo piatto nel database (Create)
     public void doSave(Piatto piatto) throws SQLException {
         String query = "INSERT INTO prodotto (nome, descrizione, prezzo, categoria, immagine) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, piatto.getNome());
             ps.setString(2, piatto.getDescrizione() != null ? piatto.getDescrizione() : "");
@@ -134,41 +146,30 @@ public class PiattoDAO {
         }
     }
 
- // Modifica un piatto esistente
+    // Modifica un piatto esistente
     public void doUpdate(Piatto piatto) throws SQLException {
-        // AGGIORNATO: Aggiunto immagine = ? nella query SQL
         String query = "UPDATE prodotto SET nome = ?, descrizione = ?, prezzo = ?, categoria = ?, immagine = ? WHERE id = ?";
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, piatto.getNome());
             ps.setString(2, piatto.getDescrizione() != null ? piatto.getDescrizione() : "");
             ps.setDouble(3, piatto.getPrezzo());
             ps.setString(4, piatto.getCategoria());
-            ps.setString(5, piatto.getImmagine() != null ? piatto.getImmagine() : "default.png"); // <-- AGGIUNTO
-            ps.setInt(6, piatto.getId()); // <-- Spostato al sesto parametro
+            ps.setString(5, piatto.getImmagine() != null ? piatto.getImmagine() : "default.png");
+            ps.setInt(6, piatto.getId());
             ps.executeUpdate();
             System.out.println("PiattoDAO: Piatto con ID " + piatto.getId() + " aggiornato con successo nel DB.");
         }
     }
 
-    // Cancella un piatto (Se non è legato a nessun ordine, altrimenti usa un flag attivo/disattivo)
+    // Cancella un piatto
     public void doDeleteLogico(int id) throws SQLException {
         String query = "DELETE FROM prodotto WHERE id = ?"; 
-        try (Connection conn = ConnessioneDB.getConnection();
+        try (Connection conn = this.ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, id);
             ps.executeUpdate();
             System.out.println("PiattoDAO: Piatto con ID " + id + " rimosso dal catalogo.");
-        }
-    }
-
-    // Metodo Main per test rapidi
-    public static void main(String[] args) {
-        PiattoDAO dao = new PiattoDAO();
-        List<Piatto> piatti = dao.getPiattiByCategoria("Bevande");
-        System.out.println("\n--- Lista Piatti (Bevande) stampata da Java ---");
-        for (Piatto p : piatti) {
-            System.out.println(p.getNome() + " - " + p.getPrezzo() + "€");
         }
     }
 }

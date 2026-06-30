@@ -16,13 +16,17 @@ import java.util.List;
 
 @WebServlet("/StoricoOrdini")
 public class StoricoOrdiniServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-    private OrdineDAO ordineDAO = new OrdineDAO();
+    private static final long serialVersionUID = 1L; 
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         String utenteLoggato = (String) session.getAttribute("utenteLoggato");
         Utente utenteCompleto = (Utente) session.getAttribute("utenteCompleto");
+        
+        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
+        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
+        // 2. Istanziato il DAO passandogli il DataSource appena preso
+        OrdineDAO ordineDAO = new OrdineDAO(ds);
 
         if (utenteLoggato == null || utenteCompleto == null) {
             response.sendRedirect(request.getContextPath() + "/Login");

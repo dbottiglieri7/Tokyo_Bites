@@ -5,16 +5,26 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import model.Utente;
-import utils.ConnessioneDB;
+import javax.sql.DataSource; // Import necessario per gestire il Connection Pool tramite JNDI
 
 public class UtenteDAO {
+
+    // Riferimento al DataSource locale del DAO
+    private DataSource ds;
+
+    // Costruttore che riceve il DataSource dalla Servlet
+    public UtenteDAO(DataSource ds) {
+        this.ds = ds;
+    }
 
     // 1. Metodo per registrare un nuovo utente nel database
     public boolean registraUtente(Utente u) {
         String query = "INSERT INTO utente (email, password, nome, cognome, ruolo) VALUES (?, ?, ?, ?, ?)";
         
-        try (Connection conn = ConnessioneDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        try (Connection conn = (this.ds != null) ? this.ds.getConnection() : null;
+             PreparedStatement ps = (conn != null) ? conn.prepareStatement(query) : null) {
+            
+            if (ps == null) throw new SQLException("Impossibile connettersi al database (DataSource nullo).");
             
             ps.setString(1, u.getEmail());
             ps.setString(2, u.getPassword()); // In un progetto reale andrebbe criptata, ma per l'esame va benissimo in chiaro
@@ -35,8 +45,10 @@ public class UtenteDAO {
     public Utente login(String email, String password) {
         String query = "SELECT * FROM utente WHERE email = ? AND password = ?";
         
-        try (Connection conn = ConnessioneDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        try (Connection conn = (this.ds != null) ? this.ds.getConnection() : null;
+             PreparedStatement ps = (conn != null) ? conn.prepareStatement(query) : null) {
+            
+            if (ps == null) throw new SQLException("Impossibile connettersi al database (DataSource nullo).");
             
             ps.setString(1, email);
             ps.setString(2, password);
@@ -57,29 +69,5 @@ public class UtenteDAO {
             System.err.println("❌ Errore in UtenteDAO.login: " + e.getMessage());
         }
         return null; // Login fallito (utente o password errati)
-    }
-
-    // Main di test per provare SUBITO a registrare un utente finto!
-    public static void main(String[] args) {
-        UtenteDAO dao = new UtenteDAO();
-        
-        // Creiamo un utente di test
-        Utente testUser = new Utente(0, "mario.rossi@email.com", "password123", "Mario", "Rossi", "CLIENTE");
-        
-        System.out.println("--- Test Registrazione ---");
-        boolean registrato = dao.registraUtente(testUser);
-        if (registrato) {
-            System.out.println(" Utente registrato con successo nel database!");
-        } else {
-            System.out.println("❌ Registrazione fallita (magari l'email esiste già?)");
-        }
-        
-        System.out.println("\n--- Test Login ---");
-        Utente loggato = dao.login("mario.rossi@email.com", "password123");
-        if (loggato != null) {
-            System.out.println(" Login riuscito! Benvenuto " + loggato.getNome() + " (" + loggato.getRuolo() + ")");
-        } else {
-            System.out.println("❌ Login fallito: credenziali errate.");
-        }
     }
 }
