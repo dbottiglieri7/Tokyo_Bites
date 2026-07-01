@@ -10,47 +10,53 @@
    2. Layout generale
    3. Barra di navigazione
    4. Pagina Login
-   5. Pagina Menu (inizio)
+   5. Pagina Menu
+   6. Card dei piatti
+   7. Barra di ricerca
+   8. Modal immagini
+   9. Effetti immagini
+   10. Console Amministratore
+   11. Responsive Design (Tablet, Smartphone, Smartphone piccoli)
 
    ============================================================ */
 
 
 /* ============================================================
-   MESSAGGI DI ERRORE
-   Utilizzati nelle pagine di Login e nelle validazioni.
+   1. MESSAGGI DI ERRORE
+   Utilizzati nelle pagine di Login e nelle validazioni dei form.
    ============================================================ */
 
 .messaggio-errore {
-    background-color: rgba(255, 56, 56, 0.15);
-    color: #ff4d4d;
-    border: 1px solid #ff3838;
-    padding: 12px 15px;
-    margin-bottom: 20px;
-    border-radius: 6px;
+    background-color: rgba(255, 56, 56, 0.15); /* Sfondo rosso semitrasparente */
+    color: #ff4d4d;                             /* Testo rosso chiaro */
+    border: 1px solid #ff3838;                  /* Bordo rosso solido */
+    padding: 12px 15px;                         /* Spazio interno: 12px sopra/sotto, 15px ai lati */
+    margin-bottom: 20px;                        /* Distanza dal prossimo elemento */
+    border-radius: 6px;                         /* Angoli arrotondati */
     text-align: center;
     font-weight: bold;
     font-size: 0.95rem;
-    box-sizing: border-box;
-    width: 100%;
+    box-sizing: border-box; /* Il padding non aumenta la larghezza totale dell'elemento */
+    width: 100%;            /* Occupa tutta la larghezza del contenitore padre */
 }
 
 
 /* ============================================================
-   LAYOUT GENERALE
+   2. LAYOUT GENERALE
    Impostazioni comuni a tutte le pagine del sito.
    ============================================================ */
 
 body {
     background-image: url('../images/Sushi_Sfondo.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+    background-size: cover;       /* L'immagine copre tutta la finestra senza lasciare spazi */
+    background-position: center;  /* L'immagine è centrata sia orizzontalmente che verticalmente */
+    background-attachment: fixed; /* L'immagine rimane ferma durante lo scroll della pagina (effetto parallasse) */
+    background-repeat: no-repeat; /* L'immagine non si ripete se è più piccola dello schermo */
     color: #ffffff;
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
+    font-family: 'Arial', sans-serif; /* font-family */
+    margin: 0;   /* Rimuove il margine di default del browser */
+    padding: 0;  /* Rimuove il padding di default del browser */
+    min-height: 100vh; /* L'altezza minima è pari all'intera altezza della finestra */
 }
 
 h1 {
@@ -58,32 +64,33 @@ h1 {
     text-align: center;
     margin-top: 50px;
     font-size: 3rem;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); /* Ombra nera semitrasparente per leggibilità sullo sfondo */
 }
 
 .content {
-    padding-top: 100px;
+    padding-top: 100px; /* Evita che il contenuto finisca sotto la navbar fissa */
 }
 
 
 /* ============================================================
-   BARRA DI NAVIGAZIONE
+   3. BARRA DI NAVIGAZIONE
    Presente in tutte le pagine dell'applicazione.
+   La navbar è fissa in cima alla pagina (position: fixed).
    ============================================================ */
 
 .navbar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: rgba(18, 18, 18, 0.85);
+    justify-content: space-between; /* Logo a sinistra, link a destra */
+    align-items: center;            /* Elementi centrati verticalmente */
+    background-color: rgba(18, 18, 18, 0.85); /* Sfondo scuro semitrasparente */
     padding: 15px 30px;
-    position: fixed;
+    position: fixed; /* Rimane visibile anche durante lo scroll */
     top: 0;
     left: 0;
     width: 100%;
-    box-sizing: border-box;
-    z-index: 1000;
-    border-bottom: 2px solid #ff3838;
+    box-sizing: border-box; /* Il padding non aumenta la larghezza totale */
+    z-index: 1000;          /* Sta sopra a tutti gli altri elementi della pagina */
+    border-bottom: 2px solid #ff3838; /* Linea rossa decorativa in fondo alla navbar */
 }
 
 .nav-logo a {
@@ -91,18 +98,18 @@ h1 {
     font-size: 1.8rem;
     font-weight: bold;
     text-decoration: none;
-    letter-spacing: 1px;
+    letter-spacing: 1px; /* Leggera spaziatura tra le lettere per effetto grafico */
 }
 
 .nav-links {
-    list-style: none;
-    display: flex;
+    list-style: none; /* Rimuove i pallini della lista */
+    display: flex;    /* I link si dispongono in riga */
     margin: 0;
     padding: 0;
 }
 
 .nav-links li {
-    margin-left: 25px;
+    margin-left: 25px; /* Spazio tra un link e l'altro */
 }
 
 .nav-links a {
@@ -110,31 +117,31 @@ h1 {
     text-decoration: none;
     font-size: 1.1rem;
     font-weight: 500;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease; /* Animazione fluida al passaggio del mouse */
 }
 
 .nav-links a:hover {
-    color: #ff3838;
+    color: #ff3838; /* Il link diventa rosso al passaggio del mouse */
 }
 
 .nav-links a.active {
     color: #ff3838;
-    border-bottom: 2px solid #ff3838;
+    border-bottom: 2px solid #ff3838; /* Sottolineatura rossa per il link attivo */
     padding-bottom: 5px;
 }
 
 
 /* ============================================================
-   PAGINA LOGIN
+   4. PAGINA LOGIN
    Contiene il box centrale con il form di autenticazione.
    ============================================================ */
 
 .login-page-wrapper {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 80px);
-    padding-top: 80px;
+    justify-content: center; /* Centra il box orizzontalmente */
+    align-items: center;     /* Centra il box verticalmente */
+    min-height: calc(100vh - 80px); /* Altezza totale meno l'altezza della navbar */
+    padding-top: 80px;       /* Spazio per non finire sotto la navbar fissa */
     box-sizing: border-box;
     width: 100%;
 }
@@ -145,8 +152,8 @@ h1 {
     border-radius: 10px;
     border: 2px solid #ff3838;
     width: 100%;
-    max-width: 380px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    max-width: 380px; /* Larghezza massima del box di login */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); /* Ombra profonda per effetto "card" */
     text-align: center;
     position: relative;
 }
@@ -160,11 +167,11 @@ h1 {
 
 .form-group {
     margin-bottom: 20px;
-    text-align: left;
+    text-align: left; /* Il testo delle label è allineato a sinistra */
 }
 
 .form-group label {
-    display: block;
+    display: block;    /* La label occupa tutta la riga, l'input va sotto */
     margin-bottom: 8px;
     color: #ffffff;
     font-weight: bold;
@@ -178,13 +185,13 @@ h1 {
     background-color: #222222;
     color: #ffffff;
     border-radius: 5px;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Il padding non aumenta la larghezza dell'input */
     font-size: 1rem;
 }
 
 .form-group input:focus {
-    border-color: #ff3838;
-    outline: none;
+    border-color: #ff3838; /* Bordo rosso quando l'input è selezionato */
+    outline: none;         /* Rimuove l'outline di default del browser */
 }
 
 .btn-login {
@@ -196,20 +203,20 @@ h1 {
     border-radius: 5px;
     font-size: 1.1rem;
     font-weight: bold;
-    cursor: pointer;
+    cursor: pointer;          /* Il cursore diventa una mano al passaggio */
     margin-top: 10px;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease; /* Animazione fluida al hover */
 }
 
 .btn-login:hover {
-    background-color: #e02424;
+    background-color: #e02424; /* Rosso più scuro al passaggio del mouse */
 }
 
 
 /* ============================================================
-   PAGINA MENU
+   5. PAGINA MENU
    Contiene:
-   - Sfondo della pagina
+   - Sfondo della pagina (sovrascrive lo sfondo con immagine)
    - Contenitore principale
    - Titolo
    - Schede delle categorie
@@ -217,6 +224,8 @@ h1 {
    ============================================================ */
 
 body.menu-page {
+    /* Sovrascrive il background con immagine definito in "body":
+       la pagina menu usa uno sfondo nero piatto per leggibilità */
     background-image: none !important;
     background: #0b0b0b !important;
     background-color: #0b0b0b !important;
@@ -224,7 +233,7 @@ body.menu-page {
 
 .menu-container {
     max-width: 1200px;
-    margin: 120px auto 40px auto;
+    margin: 120px auto 40px auto; /* 120px dall'alto per non finire sotto la navbar */
     padding: 30px;
     background: #141414;
     border-radius: 16px;
@@ -241,8 +250,8 @@ body.menu-page {
 
 .categories-tabs {
     display: flex;
-    justify-content: center;
-    gap: 15px;
+    justify-content: center; /* Le schede sono centrate orizzontalmente */
+    gap: 15px;               /* Spazio tra una scheda e l'altra */
     margin: 25px 0 40px 0;
     padding: 0;
     list-style: none;
@@ -255,10 +264,10 @@ body.menu-page {
     color: #ffffff !important;
     text-decoration: none;
     font-weight: bold;
-    border-radius: 30px;
+    border-radius: 30px;           /* Bordi completamente arrotondati (effetto "pill") */
     border: 1px solid #ff3838;
     font-size: 1rem;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease;    /* Animazione su tutte le proprietà al hover */
     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
@@ -266,17 +275,21 @@ body.menu-page {
 .categories-tabs a.tab:hover {
     background: #ff3838;
     color: #ffffff !important;
-    box-shadow: 0 0 15px rgba(255, 56, 56, 0.6);
-    transform: translateY(-2px);
-}
-.products-grid {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
-    gap: 30px !important;
+    box-shadow: 0 0 15px rgba(255, 56, 56, 0.6); /* Alone rosso */
+    transform: translateY(-2px);                   /* Leggero sollevamento verso l'alto */
 }
 
+.products-grid {
+    display: grid !important;
+    /* Colonne che si adattano automaticamente: larghezza minima 280px,
+       massima 1fr (proporzione equa dello spazio disponibile) */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 30px !important; /* Spazio tra le card */
+}
+
+
 /* ============================================================
-   CARD DEI PIATTI
+   6. CARD DEI PIATTI
    Definisce l'aspetto grafico di ogni piatto del menu.
    ============================================================ */
 
@@ -284,9 +297,9 @@ body.menu-page {
     background: #1a1a1a !important;
     border: 1px solid #333 !important;
     border-radius: 12px !important;
-    overflow: hidden !important;
+    overflow: hidden !important;  /* Nasconde il contenuto che fuoriesce dagli angoli arrotondati */
     display: flex;
-    flex-direction: column;
+    flex-direction: column;       /* Immagine in cima, info sotto, in colonna */
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
@@ -295,8 +308,8 @@ body.menu-page {
     height: 200px !important;
     background: #222 !important;
     display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    align-items: center !important;     /* Centra l'immagine verticalmente */
+    justify-content: center !important; /* Centra l'immagine orizzontalmente */
     overflow: hidden !important;
     padding: 10px;
     box-sizing: border-box;
@@ -307,14 +320,14 @@ body.menu-page {
     max-width: 100% !important;
     width: auto !important;
     height: auto !important;
-    object-fit: contain !important;
+    object-fit: contain !important; /* L'immagine mantiene le proporzioni senza essere tagliata */
 }
 
 .product-info {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    flex-grow: 1; /* Occupa tutto lo spazio verticale rimasto nella card */
 }
 
 .product-name {
@@ -327,12 +340,12 @@ body.menu-page {
     color: #aaaaaa !important;
     font-size: 0.9rem;
     margin: 0 0 20px 0;
-    flex-grow: 1;
+    flex-grow: 1; /* La descrizione si espande per spingere prezzo e pulsante in fondo */
 }
 
 .product-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Prezzo a sinistra, pulsante a destra */
     align-items: center;
 }
 
@@ -359,14 +372,14 @@ body.menu-page {
 
 
 /* ============================================================
-   BARRA DI RICERCA DEL MENU
-   Permette di filtrare i piatti in tempo reale.
+   7. BARRA DI RICERCA DEL MENU
+   Permette di filtrare i piatti in tempo reale tramite JavaScript.
    ============================================================ */
 
 .search-container {
     text-align: center;
     margin: 20px auto;
-    max-width: 500px;
+    max-width: 500px; /* Limita la larghezza della barra su schermi grandi */
 }
 
 .search-input {
@@ -374,7 +387,7 @@ body.menu-page {
     padding: 12px 20px;
     font-size: 1rem;
     border: 2px solid #ff3838;
-    border-radius: 25px;
+    border-radius: 25px;           /* Bordi arrotondati per effetto "pill" */
     background-color: #1a1a1a;
     color: white;
     outline: none;
@@ -382,36 +395,37 @@ body.menu-page {
 }
 
 .search-input:focus {
-    box-shadow: 0 0 10px rgba(255, 56, 56, 0.5);
+    box-shadow: 0 0 10px rgba(255, 56, 56, 0.5); /* Alone rosso quando l'input è attivo */
 }
 
 
 /* ============================================================
-   MODAL DI INGRANDIMENTO IMMAGINI
+   8. MODAL DI INGRANDIMENTO IMMAGINI
    Visualizzato quando l'utente clicca sull'immagine di un piatto.
+   Copre l'intera schermata con sfondo scuro semitrasparente.
    ============================================================ */
 
 .image-modal {
-    display: none;
-    position: fixed;
-    z-index: 9999;
+    display: none;    /* Nascosto di default, mostrato via JavaScript al click */
+    position: fixed;  /* Copre tutta la finestra indipendentemente dallo scroll */
+    z-index: 9999;    /* Sta sopra a tutto, inclusa la navbar */
     padding-top: 100px;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.9);
-    cursor: pointer;
+    background-color: rgba(0,0,0,0.9); /* Sfondo quasi completamente nero */
+    cursor: pointer;  /* Clic ovunque per chiudere il modal */
 }
 
 .modal-content {
     margin: auto;
     display: block;
     max-width: 80%;
-    max-height: 70vh;
+    max-height: 70vh;  /* Altezza massima: 70% dell'altezza della finestra */
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(255,255,255,0.2);
-    animation: zoomIn 0.3s ease;
+    animation: zoomIn 0.3s ease; /* Animazione di apertura */
 }
 
 .modal-caption {
@@ -425,33 +439,33 @@ body.menu-page {
     font-family: sans-serif;
 }
 
+/* Animazione di zoom in ingresso per il modal */
 @keyframes zoomIn {
     from {
-        transform: scale(0);
+        transform: scale(0); /* Parte da dimensione zero */
     }
-
     to {
-        transform: scale(1);
+        transform: scale(1); /* Arriva a dimensione normale */
     }
 }
 
 
 /* ============================================================
-   EFFETTI SULLE IMMAGINI DEL MENU
+   9. EFFETTI SULLE IMMAGINI DEL MENU
    ============================================================ */
 
 .product-img {
-    cursor: pointer;
+    cursor: pointer;              /* Indica che l'immagine è cliccabile */
     transition: transform 0.2s ease;
 }
 
 .product-img:hover {
-    transform: scale(1.03);
+    transform: scale(1.03); /* Leggero ingrandimento al passaggio del mouse */
 }
 
 
 /* ============================================================
-   CONSOLE AMMINISTRATORE
+   10. CONSOLE AMMINISTRATORE
    Comprende:
    - Dashboard
    - Gestione Catalogo
@@ -461,12 +475,11 @@ body.menu-page {
    ============================================================ */
 
 /* Contenitore principale della Dashboard */
-
 .admin-container {
     max-width: 1100px;
-    margin: 120px auto 40px auto;
+    margin: 120px auto 40px auto; /* 120px per non finire sotto la navbar fissa */
     padding: 35px;
-    background-color: rgba(18, 18, 18, 0.92);
+    background-color: rgba(18, 18, 18, 0.92); /* Sfondo scuro leggermente trasparente */
     border: 2px solid #ff3838;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
@@ -483,12 +496,13 @@ body.menu-page {
 
 /* ============================================================
    MENU DI NAVIGAZIONE DELL'AMMINISTRATORE
+   Sotto-navigazione interna alla console admin.
    ============================================================ */
 
 .admin-subnav {
     margin-bottom: 30px;
     padding-bottom: 15px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #333; /* Linea separatrice sotto i link */
 }
 
 .admin-subnav a {
@@ -507,13 +521,14 @@ body.menu-page {
 
 /* ============================================================
    FORM DI INSERIMENTO NUOVI PRODOTTI
+   Layout flessibile che dispone i campi in riga su desktop.
    ============================================================ */
 
 .admin-form-inline {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap;        /* I campi vanno a capo se lo spazio non basta */
     gap: 15px;
-    align-items: flex-end;
+    align-items: flex-end;  /* Allinea i campi in basso (utile quando hanno label di altezze diverse) */
     background: #1a1a1a;
     padding: 20px;
     border-radius: 8px;
@@ -523,8 +538,8 @@ body.menu-page {
 
 .admin-form-inline .form-group {
     margin-bottom: 0;
-    flex: 1;
-    min-width: 180px;
+    flex: 1;           /* Ogni campo occupa una quota uguale dello spazio disponibile */
+    min-width: 180px;  /* Larghezza minima prima di andare a capo */
 }
 
 .admin-form-inline select {
@@ -545,22 +560,22 @@ body.menu-page {
    ============================================================ */
 
 .admin-table-wrapper {
-    overflow-x: auto;
+    overflow-x: auto; /* Abilita lo scroll orizzontale se la tabella è più larga dello schermo */
     margin-top: 20px;
 }
 
 .admin-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse; /* Rimuove gli spazi doppi tra i bordi delle celle */
     background-color: #161616;
     color: #ffffff;
     border-radius: 8px;
-    overflow: hidden;
+    overflow: hidden; /* Necessario affinché il border-radius sia visibile sulla tabella */
     border: 1px solid #222;
 }
 
 .admin-table th {
-    background-color: #ff3838;
+    background-color: #ff3838; /* Intestazione rossa */
     color: #ffffff;
     font-weight: bold;
     text-align: left;
@@ -570,19 +585,19 @@ body.menu-page {
 
 .admin-table td {
     padding: 12px 16px;
-    border-bottom: 1px solid #2a2a2a;
+    border-bottom: 1px solid #2a2a2a; /* Linea separatrice tra le righe */
     font-size: 0.95rem;
-    vertical-align: middle;
+    vertical-align: middle; /* Contenuto centrato verticalmente nella cella */
 }
 
 .admin-table tr:hover {
-    background-color: #222222;
+    background-color: #222222; /* Evidenzia la riga al passaggio del mouse */
 }
 
 
 /* ============================================================
    PULSANTI DELLA CONSOLE AMMINISTRATORE
-   Utilizzati per operazioni come Eliminazione prodotti.
+   Utilizzati per operazioni come eliminazione prodotti.
    ============================================================ */
 
 .btn-admin-action {
@@ -595,18 +610,23 @@ body.menu-page {
     font-weight: bold;
     font-size: 0.85rem;
     transition: background 0.2s;
+    min-width: 90px;    /* larghezza minima uguale per tutti i pulsanti */
+    text-align: center; /* testo centrato dentro il pulsante */
 }
 
 .btn-admin-action:hover {
-    background-color: #b31d1d;
+    background-color: #b31d1d; /* Rosso molto scuro per feedback visivo */
 }
 
+
 /* ============================================================
-   RESPONSIVE DESIGN
+   11. RESPONSIVE DESIGN
    Adattamento automatico per Tablet e Smartphone.
+   Le media query sovrascrivono le regole precedenti per
+   schermi più piccoli, applicando layout semplificati.
    ============================================================ */
 
-/* -------------------- TABLET -------------------- */
+/* -------------------- TABLET (max 1024px) -------------------- */
 @media screen and (max-width: 1024px) {
 
     .menu-container,
@@ -617,12 +637,12 @@ body.menu-page {
     }
 
     .products-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* Due colonne fisse su tablet */
         gap: 20px !important;
     }
 
     .categories-tabs {
-        flex-wrap: wrap;
+        flex-wrap: wrap; /* Le schede vanno a capo se non entrano in una riga */
         gap: 10px;
     }
 
@@ -631,12 +651,12 @@ body.menu-page {
     }
 
     .nav-links li {
-        margin-left: 15px;
+        margin-left: 15px; /* Riduce la spaziatura tra i link */
     }
 }
 
 
-/* -------------------- SMARTPHONE -------------------- */
+/* -------------------- SMARTPHONE (max 768px) -------------------- */
 @media screen and (max-width: 768px) {
 
     h1 {
@@ -647,18 +667,20 @@ body.menu-page {
     }
 
     .content {
-        padding-top: 170px;
+        padding-top: 170px; /* Aumentato perché la navbar su mobile è più alta (va a capo) */
     }
 
+
     /* ============================================================
-       NAVBAR
+       NAVBAR (mobile)
+       Su smartphone la navbar si dispone in colonna invece che in riga.
        ============================================================ */
 
     .navbar {
-        flex-direction: column;
+        flex-direction: column; /* Logo sopra, link sotto */
         align-items: center;
         padding: 12px;
-        height: auto !important;
+        height: auto !important; /* L'altezza si adatta al contenuto */
     }
 
     .nav-logo {
@@ -667,28 +689,28 @@ body.menu-page {
 
     .nav-links {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: wrap;        /* I link vanno a capo se non entrano in una riga */
         justify-content: center;
         gap: 8px;
     }
 
     .nav-links li {
-        margin: 0;
+        margin: 0; /* Rimuove il margine sinistro usato su desktop */
     }
 
     .nav-links a {
-        font-size: .95rem;
+        font-size: .95rem; /* Font leggermente ridotto per risparmiare spazio */
     }
 
 
     /* ============================================================
-       LOGIN E REGISTRAZIONE
+       LOGIN E REGISTRAZIONE (mobile)
        ============================================================ */
 
     .login-container-flex,
     .auth-container-flex {
         display: flex !important;
-        flex-direction: column !important;
+        flex-direction: column !important; /* Elementi in colonna invece che in riga */
         align-items: center !important;
         gap: 30px !important;
     }
@@ -702,12 +724,12 @@ body.menu-page {
 
 
     /* ============================================================
-       MENU
+       MENU (mobile)
        ============================================================ */
 
     .menu-container {
         width: 95%;
-        margin-top: 165px;
+        margin-top: 165px; /* Aumentato perché la navbar mobile è più alta */
         padding: 15px;
     }
 
@@ -716,33 +738,42 @@ body.menu-page {
     }
 
     .categories-tabs {
-        overflow-x: auto;
-        white-space: nowrap;
+        overflow-x: auto;           /* Le schede diventano scrollabili orizzontalmente */
+        white-space: nowrap;        /* Impedisce alle schede di andare a capo */
         justify-content: flex-start;
         gap: 10px;
         padding-bottom: 10px;
     }
 
     .categories-tabs::-webkit-scrollbar {
-        display: none;
+        display: none; /* Nasconde la scrollbar nelle schede categoria su mobile */
     }
 
     .categories-tabs a.tab {
-        flex: 0 0 auto;
+        flex: 0 0 auto; /* Ogni scheda mantiene la sua larghezza naturale, senza comprimersi */
         padding: 10px 16px;
     }
 
     .products-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr !important; /* Una sola colonna su smartphone */
     }
 
     .product-image-box {
         height: 180px !important;
     }
 
+    /* Impedisce agli input del menu di uscire dai bordi dello schermo */
+    .menu-container input[type="text"],
+    .menu-container input,
+    .search-bar {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
 
     /* ============================================================
-       CHECKOUT
+       CHECKOUT (mobile)
        ============================================================ */
 
     .checkout-container,
@@ -765,7 +796,7 @@ body.menu-page {
     }
 
     .form-row-flex .form-group {
-        flex: 1;
+        flex: 1;  /* Ogni campo occupa metà della riga (es. Città e CAP affiancati) */
         margin: 0;
     }
 
@@ -776,28 +807,28 @@ body.menu-page {
 
 
     /* ============================================================
-       CONSOLE ADMIN
+       CONSOLE ADMIN (mobile)
        ============================================================ */
 
     .admin-container {
         width: 95%;
-        margin-top: 210px !important;
+        margin-top: 260px !important; /* Maggiore margine perché la navbar mobile è alta */
         padding: 18px;
         box-sizing: border-box;
     }
 
     .admin-subnav {
-        text-align: center;
+        text-align: center; /* I link della sotto-nav sono centrati su mobile */
     }
 
     .admin-subnav a {
         display: inline-block;
-        margin: 6px;
+        margin: 6px; /* Spaziatura uniforme intorno ad ogni link */
     }
 
     .admin-form-inline {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: column;  /* I campi del form si dispongono in colonna */
+        align-items: stretch;    /* Ogni campo occupa tutta la larghezza disponibile */
     }
 
     .admin-form-inline .form-group {
@@ -805,46 +836,79 @@ body.menu-page {
     }
 
     .admin-table-wrapper {
-        overflow-x: auto;
+        overflow-x: auto;              /* La tabella admin è scrollabile orizzontalmente */
+        -webkit-overflow-scrolling: touch; /* Scroll fluido su iOS */
     }
 
     .admin-table {
-        min-width: 900px;
+        min-width: 900px; /* La tabella ha una larghezza minima: su mobile si scrolla */
     }
 
 
     /* ============================================================
-       STORICO ORDINI
+       STORICO ORDINI (mobile)
+       Corregge il layout della tabella degli ordini:
+       - Il contenitore .menu-container diventa scrollabile orizzontalmente
+       - La tabella ha larghezza minima per evitare il taglio del contenuto
+       - Il background è applicato alle righe della tabella, non solo al
+         contenitore, così lo sfondo si estende anche oltre il bordo visibile
+         durante lo scroll orizzontale
        ============================================================ */
 
     .orders-container,
-    .storico-container {
+    .storico-container,
+    .orders-container-flex,
+    main.storico-main,
+    body.menu-page .menu-container {
         width: 95% !important;
-        margin-top: 180px !important;
-        overflow-x: auto;
+        max-width: 95% !important;
+        margin-top: 120px !important;
+        padding-top: 20px !important;
+        overflow-x: auto;              /* Abilita lo scroll orizzontale del contenuto */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .storico-container h1,
+    .storico-container h2,
+    .orders-container h1,
+    body.menu-page h1.menu-title {
+        margin-top: 20px !important;
+        display: block !important;
+        clear: both !important;
+        position: relative;
+        z-index: 10; /* Garantisce che il titolo stia sopra agli altri elementi */
     }
 
     .orders-table,
-    .storico-table {
-        min-width: 750px;
+    .storico-table,
+    body.menu-page .menu-container table {
+        min-width: 750px;          /* Larghezza minima: attiva lo scroll se lo schermo è più stretto */
+        width: 100%;
+        background-color: #1a1a1a; /* Sfondo sulla tabella (non sul contenitore) per coprire anche la zona di scroll */
+    }
+
+    body.menu-page .menu-container table tr {
+        background-color: #1a1a1a; /* Sfondo uniforme su ogni riga per evitare il "taglio" grigio */
     }
 
 
     /* ============================================================
-       BOTTONI
+       BOTTONI (mobile)
        ============================================================ */
 
     .btn-login,
     .btn-admin-action {
-        width: 100%;
+        width: 100%; /* I pulsanti occupano tutta la larghezza su smartphone */
     }
 
 }
-/* -------------------- SMARTPHONE PICCOLI -------------------- */
+
+
+/* -------------------- SMARTPHONE PICCOLI (max 480px) -------------------- */
 @media screen and (max-width: 480px) {
 
     h1 {
-        font-size: 1.5rem;
+        font-size: 1.5rem; /* Font ulteriormente ridotto per schermi molto piccoli */
     }
 
     .menu-title {
@@ -852,7 +916,7 @@ body.menu-page {
     }
 
     .login-box {
-        padding: 20px 12px;
+        padding: 20px 12px; /* Padding ridotto per guadagnare spazio orizzontale */
     }
 
     .product-image-box {
@@ -861,6 +925,9 @@ body.menu-page {
 
     .modal-content {
         max-width: 95%;
+        max-height: 70vh !important;  /* Impedisce al modal di uscire dallo schermo in altezza */
+        overflow-y: auto !important;  /* Il contenuto del modal è scorrevole verticalmente */
+        box-sizing: border-box;
     }
 
     .modal-caption {
