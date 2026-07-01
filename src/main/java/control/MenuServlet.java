@@ -16,37 +16,37 @@ public class MenuServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. Lettura della categoria dall'URL
+        // 1. Lettura della categoria selezionata dall'utente via URL
         String categoriaSelezionata = request.getParameter("categoria");
         
-        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
+        // Recupero del DataSource centralizzato dal contesto globale dell'applicazione
         javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
-        //Istanziato il DAO passandogli il DataSource appena preso
         PiattoDAO piattoDAO = new PiattoDAO(ds);
         
-        // 2. CORREZIONE LOGICA: Se è null, vuota o non valida, mostriamo una categoria ricca di default
+        // 2.Se il parametro è vuoto o nullo, impostiamo una categoria predefinita
         if (categoriaSelezionata == null || categoriaSelezionata.trim().isEmpty()) {
-            categoriaSelezionata = "Sushi e Sashimi";
-        } else {
-            // Eliminiamo spazi bianchi superflui all'inizio e alla fine per sicurezza
+            categoriaSelezionata = "Sushi e Sashimi"; 
+            } else {
             categoriaSelezionata = categoriaSelezionata.trim();
         }
 
-        // 3. Recuperiamo i piatti dal database filtrati per la nuova categoria
+        // 3. Recupero dei soli piatti attivi associati alla categoria (Pattern DAO)
         List<Piatto> listaProdotti = piattoDAO.getPiattiByCategoria(categoriaSelezionata);
         
-        // Log di debug in console di Eclipse/Tomcat per verificare cosa sta succedendo in tempo reale
+        // Messaggio di log utile in console per tracciare le transazioni dell'applicazione in tempo reale
         System.out.println("[MenuServlet] Richiesta categoria: '" + categoriaSelezionata + "' -> Trovati " + listaProdotti.size() + " prodotti.");
         
-        // 4. Invio dei dati alla pagina JSP
+        // 4. Trasferimento dei dati raccolti dal Model alla Request per renderli accessibili alla View
         request.setAttribute("prodottiMenu", listaProdotti);
         request.setAttribute("categoriaAttuale", categoriaSelezionata);
 
+        // Impedisce l'accesso diretto alla JSP instradandola tramite WEB-INF
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/view/menu.jsp");
         dispatcher.forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Redirige eventuali richieste POST allo stesso flusso di gestione delle GET
         doGet(request, response);
     }
 }

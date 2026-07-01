@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
 @WebServlet("/Carrello")
@@ -22,10 +24,13 @@ public class CarrelloServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Carrello carrello = (Carrello) session.getAttribute("carrello");
         
+        //Inizializzazione automatica del carrello in sessione se non ancora esistente
         if (carrello == null) {
             carrello = new Carrello();
             session.setAttribute("carrello", carrello);
         }
+        
+        // Inoltro protetto verso la vista del carrello
         request.getRequestDispatcher("/WEB-INF/view/carrello.jsp").forward(request, response);
     }
 
@@ -33,7 +38,6 @@ public class CarrelloServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Carrello carrello = (Carrello) session.getAttribute("carrello");
         
-        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
         javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
         
         if (carrello == null) {
@@ -42,49 +46,66 @@ public class CarrelloServlet extends HttpServlet {
         }
 
         String azione = request.getParameter("azione");
-        boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+        
+        // Rilevamento della natura della richiesta (Se effettuata in background tramite AJAX)
+        boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With")) || 
+                         (request.getParameter("ajax") != null);
 
-        if (azione != null && azione.equals("rimuovi")) {
-            int idPiatto = Integer.parseInt(request.getParameter("idPiatto"));
-            carrello.rimuoviPiatto(idPiatto);
-            
-            if (isAjax) {
-                inviaRispostaJson(response, carrello, idPiatto);
-                return;
-            }
-            response.sendRedirect(request.getContextPath() + "/Carrello");
-
-        } else if (azione != null && azione.equals("svuota")) {
-            carrello.svuota();
-            if (isAjax) {
-                inviaRispostaJson(response, carrello, -1);
-                return;
-            }
-            response.sendRedirect(request.getContextPath() + "/Carrello");
-
-        } else {
-            int idPiatto = Integer.parseInt(request.getParameter("idPiatto"));
-            PiattoDAO dao = new PiattoDAO(ds);
-            try {
-                Piatto piatto = dao.doRetrieveByKey(idPiatto);
-                if (piatto != null) {
-                    carrello.aggiungiPiatto(piatto);
+        try {
+            if (azione != null && azione.equals("rimuovi")) {
+                int idPiatto = Integer.parseInt(request.getParameter("idPiatto"));
+                carrello.rimuoviPiatto(idPiatto);
+                
+                if (isAjax) {
+                    inviaRispostaJson(response, carrello, idPiatto);
+                    return;
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+                response.sendRedirect(request.getContextPath() + "/Carrello");
+
+            } else if (azione != null && azione.equals("svuota")) {
+                carrello.svuota();
+                
+                if (isAjax) {
+                    inviaRispostaJson(response, carrello, -1);
+                    return;
+                }
+                response.sendRedirect(request.getContextPath() + "/Carrello");
+
+            } else {
+                // Azione di aggiunta prodotto al carrello
+                String idPiattoStr = request.getParameter("idPiatto");
+                if (idPiattoStr != null && !idPiattoStr.isEmpty()) {
+                    int idPiatto = Integer.parseInt(idPiattoStr);
+                    PiattoDAO dao = new PiattoDAO(ds);
+                    
+                    Piatto piatto = dao.doRetrieveByKey(idPiatto);
+                    if (piatto != null) {
+                        carrello.aggiungiPiatto(piatto);
+                    }
+                    
+                    if (isAjax) {
+                        inviaRispostaJson(response, carrello, idPiatto);
+                        return;
+                    }
+                }
+                
+                // Messa in sicurezza dell'URL tramite encoding per evitare che spazi o caratteri speciali rompano il redirect
+                String categoria = request.getParameter("categoriaProvenienza");
+                if (categoria == null || categoria.trim().isEmpty()) {
+                    categoria = "Sushi e Sashimi";
+                }
+                String categoriaEncoded = URLEncoder.encode(categoria.trim(), StandardCharsets.UTF_8.toString());
+                response.sendRedirect(request.getContextPath() + "/Menu?categoria=" + categoriaEncoded);
             }
-            
-            if (isAjax) {
-                inviaRispostaJson(response, carrello, idPiatto);
-                return;
-            }
-            
-            String categoria = request.getParameter("categoriaProvenienza");
-            response.sendRedirect(request.getContextPath() + "/Menu?categoria=" + (categoria != null ? categoria : "Bevande"));
+        } catch (NumberFormatException e) {
+            // Se l'ID del piatto non è valido o manipolato, rimanda al carrello senza mandare in crash l'applicazione
+            response.sendRedirect(request.getContextPath() + "/Carrello");
+        } catch (SQLException e) {
+            throw new ServletException(e);
         }
     }
 
-    // Metodo helper per generare JSON pulito a mano senza dipendenze esterne
+    // Generazione manuale della stringa JSON per rispondere alle chiamate AJAX del client
     private void inviaRispostaJson(HttpServletResponse response, Carrello carrello, int idPiatto) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -92,6 +113,7 @@ public class CarrelloServlet extends HttpServlet {
         int nuovaQuantita = 0;
         double prezzoParziale = 0.0;
         
+        // Calcola la quantità aggiornata e il subtotale del prodotto specifico modificato nel carrello
         for (Piatto p : carrello.getElementi()) {
             if (p.getId() == idPiatto) {
                 nuovaQuantita++;
@@ -106,7 +128,7 @@ public class CarrelloServlet extends HttpServlet {
         out.print("\"idPiatto\": " + idPiatto + ",");
         out.print("\"nuovaQuantita\": " + nuovaQuantita + ",");
         out.print("\"prezzoParziale\": \"" + String.format(java.util.Locale.US, "%.2f", prezzoParziale) + "\",");
-        out.print("\"prezzoTotale\": \" " + String.format(java.util.Locale.US, "%.2f", carrello.getPrezzoTotale()) + "\"");
+        out.print("\"prezzoTotale\": \"" + String.format(java.util.Locale.US, "%.2f", carrello.getPrezzoTotale()) + "\"");
         out.print("}");
         out.flush();
     }

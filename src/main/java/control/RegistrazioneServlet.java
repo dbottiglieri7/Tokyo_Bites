@@ -20,38 +20,49 @@ public class RegistrazioneServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         
-        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
+        // Recupero del DataSource dal contesto globale (configurato dal MainContext)
         javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
-        // 2. Istanziato il DAO passandogli il DataSource appena preso
+        // Istanziato il DAO passandogli il DataSource appena preso
         UtenteDAO utenteDAO = new UtenteDAO(ds);
 
-        // Creiamo l'utente usando il costruttore vuoto + i setter
+        // SICUREZZA LATO SERVER: Controllo di robustezza se i dati arrivano malformati o vuoti
+        if (nome == null || nome.trim().isEmpty() ||
+            cognome == null || cognome.trim().isEmpty() ||
+            email == null || email.trim().isEmpty() ||
+            password == null || password.trim().isEmpty()) {
+            
+            request.setAttribute("errore", "Tutti i campi sono obbligatori.");
+            request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
+            return;
+        }
+
+        // Creiamo l'utente usando il costruttore vuoto + i setter (Pattern JavaBean)
         Utente nuovoUtente = new Utente();
-        nuovoUtente.setEmail(email);
+        nuovoUtente.setEmail(email.trim());
         nuovoUtente.setPassword(password);
-        nuovoUtente.setNome(nome);
-        nuovoUtente.setCognome(cognome);
-        nuovoUtente.setRuolo("CLIENTE");
+        nuovoUtente.setNome(nome.trim());
+        nuovoUtente.setCognome(cognome.trim());
+        nuovoUtente.setRuolo("CLIENTE"); // Impostazione di default per i nuovi registrati
 
         boolean registrato = utenteDAO.registraUtente(nuovoUtente);
 
         if (registrato) {
-            System.out.println(" RegistrazioneServlet: " + email + " registrato con successo!");
+            System.out.println("✅ RegistrazioneServlet: " + email + " registrato con successo!");
             request.setAttribute("messaggio", "Registrazione completata! Ora puoi accedere.");
             
-            //Punta al percorso reale sotto WEB-INF 
+            // Passiamo il controllo alla LoginServlet 
             request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
         } else {
             System.out.println("❌ RegistrazioneServlet: Fallito l'inserimento per " + email);
             request.setAttribute("errore", "Errore durante la registrazione. Email già esistente?");
             
-            //Punta al percorso reale sotto WEB-INF
+            // Rimanda alla vista di login/registrazione mostrando l'errore nel DOM senza alert esterni
             request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
         }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Se qualcuno prova ad accedere via GET, viene rimandato al URL del Login 
+        // Se qualcuno tenta di accedere alla registrazione direttamente in GET, viene reindirizzato alla pagina di Login
         response.sendRedirect(request.getContextPath() + "/Login");
     }
 }

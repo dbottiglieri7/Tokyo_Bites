@@ -23,18 +23,20 @@ public class AdminServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         
-        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
-        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
-        //Istanziato il DAO passandogli il DataSource appena preso
-        PiattoDAO piattoDAO = new PiattoDAO(ds);
-        OrdineDAO ordineDAO = new OrdineDAO(ds);
-        
-        // 1. Controllo Accessi
+        // 1. Controllo Accessi Rigido (Ruolo + Controllo presenza Token)
         String ruolo = (String) session.getAttribute("ruoloUtente");
-        if (ruolo == null || !ruolo.equals("admin")) {
+        String sessionToken = (String) session.getAttribute("sessionToken");
+        
+        if (ruolo == null || !ruolo.equals("admin") || sessionToken == null) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Accesso non autorizzato.");
             return;
         }
+        
+        // Recupero del DataSource dal contesto globale (configurato dal MainContext)
+        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
+        // Istanziamo i DAO passando il DataSource preso dal contesto
+        PiattoDAO piattoDAO = new PiattoDAO(ds);
+        OrdineDAO ordineDAO = new OrdineDAO(ds);
 
         String azione = request.getParameter("azione");
         if (azione == null) azione = "visualizzaCatalogo";
@@ -44,6 +46,7 @@ public class AdminServlet extends HttpServlet {
                 case "visualizzaCatalogo":
                     List<Piatto> catalogo = piattoDAO.getAllPiatti();
                     request.setAttribute("catalogo", catalogo);
+                    // Rispetta la checklist: accesso diretto impedito, le JSP sono sotto WEB-INF/view/
                     request.getRequestDispatcher("/WEB-INF/view/AdminDashboard.jsp").forward(request, response);
                     break;
 
@@ -54,6 +57,7 @@ public class AdminServlet extends HttpServlet {
 
                     List<Ordine> ordini;
 
+                    // Logica di filtraggio delle date e dei clienti per la visualizzazione degli ordini
                     if (((dataInizio != null && !dataInizio.isEmpty()) || (dataFine != null && !dataFine.isEmpty())) 
                             && (emailCliente != null && !emailCliente.isEmpty())) {
                         
@@ -81,17 +85,15 @@ public class AdminServlet extends HttpServlet {
                     break;
 
                 case "dettaglioOrdine":
-                    // Chiamata AJAX per ottenere i piatti associati a un ordine
+                    // Chiamata AJAX per ottenere i dettagli dei piatti di un ordine senza ricaricare la pagina
                     int idOrdine = Integer.parseInt(request.getParameter("idOrdine"));
-                    
-                    // Recuperiamo la lista di piatti per questo ordine dal DAO
                     List<Piatto> piattiOrdinati = ordineDAO.doRetrievePiattiByOrdine(idOrdine);
                     
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
                     PrintWriter out = response.getWriter();
                     
-                    // Costruiamo un JSON manuale leggero per l'AJAX della JSP
+                    // Costruzione manuale del JSON per evitare dipendenze esterne non incluse
                     StringBuilder json = new StringBuilder("[");
                     for (int i = 0; i < piattiOrdinati.size(); i++) {
                         Piatto p = piattiOrdinati.get(i);
@@ -105,7 +107,11 @@ public class AdminServlet extends HttpServlet {
                     
                     out.print(json.toString());
                     out.flush();
-                    return; // Interrompiamo il flusso per non fare forward a nessuna pagina JSP
+                    return; // Interrompiamo il flusso per evitare conflitti con i forward della JSP
+                
+                default:
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Azione non valida.");
+                    break;
             }
         } catch (SQLException e) {
             throw new ServletException(e);
@@ -115,46 +121,57 @@ public class AdminServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         String ruolo = (String) session.getAttribute("ruoloUtente");
+        String sessionToken = (String) session.getAttribute("sessionToken");
         
-        //Recupero del  DataSource dal contesto globale (configurato dal MainContext)
-        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
-        //Istanziato il DAO passandogli il DataSource appena preso
-        PiattoDAO piattoDAO = new PiattoDAO(ds);
-        OrdineDAO ordineDAO = new OrdineDAO(ds);
-        
-        
-        if (ruolo == null || !ruolo.equals("admin")) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        // Controllo accessi anche sulle richieste POST per sicurezza di back-end
+        if (ruolo == null || !ruolo.equals("admin") || sessionToken == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Accesso non autorizzato.");
             return;
         }
+
+        javax.sql.DataSource ds = (javax.sql.DataSource) getServletContext().getAttribute("DataSource");
+        PiattoDAO piattoDAO = new PiattoDAO(ds);
+        OrdineDAO ordineDAO = new OrdineDAO(ds);
 
         String azione = request.getParameter("azione");
 
         try {
             if ("inserisci".equals(azione)) {
                 String nome = request.getParameter("nome");
-                double prezzo = Double.parseDouble(request.getParameter("prezzo"));
+                String prezzoStr = request.getParameter("prezzo");
                 String categoria = request.getParameter("categoria");
                 String descrizione = request.getParameter("descrizione");
-                String immagine = request.getParameter("immagine"); // <-- AGGIUNTO: Legge l'immagine dal form
+                String immagine = request.getParameter("immagine");
+                
+                // Controllo robustezza parsing numerico per evitare eccezioni impreviste sul server
+                double prezzo = 0.0;
+                if (prezzoStr != null && !prezzoStr.isEmpty()) {
+                    prezzo = Double.parseDouble(prezzoStr);
+                }
                 
                 Piatto nuovoPiatto = new Piatto();
                 nuovoPiatto.setNome(nome);
                 nuovoPiatto.setPrezzo(prezzo);
                 nuovoPiatto.setCategoria(categoria);
                 nuovoPiatto.setDescrizione(descrizione);
-                nuovoPiatto.setImmagine(immagine); // <-- AGGIUNTO: Imposta l'immagine nel bean
+                nuovoPiatto.setImmagine(immagine);
                 
                 piattoDAO.doSave(nuovoPiatto);
+                // Usiamo redirect dopo una POST per evitare inserimenti duplicati aggiornando la pagina (Pattern Post-Redirect-Get)
                 response.sendRedirect(request.getContextPath() + "/AdminDashboard?azione=visualizzaCatalogo");
                 
             } else if ("modifica".equals(azione)) {
                 int id = Integer.parseInt(request.getParameter("idPiatto"));
                 String nome = request.getParameter("nome");
-                double prezzo = Double.parseDouble(request.getParameter("prezzo"));
+                String prezzoStr = request.getParameter("prezzo");
                 String categoria = request.getParameter("categoria");
                 String descrizione = request.getParameter("descrizione");
-                String immagine = request.getParameter("immagine"); // <-- AGGIUNTO: Legge l'immagine modificata dal form
+                String immagine = request.getParameter("immagine");
+                
+                double prezzo = 0.0;
+                if (prezzoStr != null && !prezzoStr.isEmpty()) {
+                    prezzo = Double.parseDouble(prezzoStr);
+                }
                 
                 Piatto piattoModificato = new Piatto();
                 piattoModificato.setId(id);
@@ -162,13 +179,14 @@ public class AdminServlet extends HttpServlet {
                 piattoModificato.setPrezzo(prezzo);
                 piattoModificato.setCategoria(categoria);
                 piattoModificato.setDescrizione(descrizione);
-                piattoModificato.setImmagine(immagine); // <-- AGGIUNTO: Imposta l'immagine aggiornata nel bean
+                piattoModificato.setImmagine(immagine);
                 
                 piattoDAO.doUpdate(piattoModificato);
                 response.sendRedirect(request.getContextPath() + "/AdminDashboard?azione=visualizzaCatalogo");
 
             } else if ("cancella".equals(azione)) {
                 int id = Integer.parseInt(request.getParameter("idPiatto"));
+                // doDeleteLogico
                 piattoDAO.doDeleteLogico(id); 
                 response.sendRedirect(request.getContextPath() + "/AdminDashboard?azione=visualizzaCatalogo");
                 
@@ -178,13 +196,14 @@ public class AdminServlet extends HttpServlet {
 
                 ordineDAO.doUpdateStato(idOrdine, nuovoStato);
 
+                // Risposta AJAX testuale rapida per l'aggiornamento dinamico dello stato dell'ordine
                 response.setContentType("text/plain");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().print("OK");
                 return;
             }
             
-        } catch (SQLException e) {
+        } catch (SQLException | NumberFormatException e) {
             throw new ServletException(e);
         }
     }

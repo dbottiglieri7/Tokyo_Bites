@@ -112,19 +112,15 @@ public class ConfermaOrdineServlet extends HttpServlet {
    
         boolean ordineSalvato = ordineDAO.salvaOrdineCompleto(nuovoOrdine, emailUtente, indirizzo, citta, cap, carrello);
 
-        response.setContentType("text/html");
-        response.getWriter().println("<body style='background:#111; color:white; text-align:center; padding-top:100px; font-family:sans-serif;'>");
-
         if (ordineSalvato) {
             carrello.svuota();
-            response.getWriter().println("<h1 style='color:yellow;'>Grazie! Ordine effettuato con successo 🍣 Pagamento Ricevuto!</h1>");
-            response.getWriter().println("<p>L'ordine è stato registrato nel database e il carrello è stato svuotato.</p>");
+            // Impostiamo un messaggio di successo da mostrare sulla pagina di conferma
+            request.setAttribute("messaggioSuccesso", "Grazie! Ordine effettuato con successo 🍣 Pagamento Ricevuto!");
+            request.getRequestDispatcher("/WEB-INF/view/checkout.jsp").forward(request, response);
         } else {
-            response.getWriter().println("<h1 style='color:red;'>Errore durante l'elaborazione dell'ordine.</h1>");
-            response.getWriter().println("<p>Riprova più tardi o contatta l'assistenza.</p>");
+            // Impostiamo un messaggio di errore e lo rimandiamo al checkout o a una pagina di errore
+            request.setAttribute("errorePagamento", "Errore durante l'elaborazione dell'ordine. Riprova più tardi.");
+            request.getRequestDispatcher("/WEB-INF/view/checkout.jsp").forward(request, response);
         }
-
-        response.getWriter().println("<a href='" + request.getContextPath() + "/Menu' style='color:#ff3838; text-decoration:none; font-weight:bold;'>Torna al Menu</a>");
-        response.getWriter().println("</body>");
     }
 }

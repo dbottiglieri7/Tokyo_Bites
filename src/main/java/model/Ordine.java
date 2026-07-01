@@ -1,24 +1,51 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Ordine {
+/**
+ * Classe Model che rappresenta un ordine effettuato da un utente.
+ * Fa parte del layer Model nel pattern architetturale MVC.
+ * Mappa la tabella 'ordine' del database.
+ *
+ * Implementa Serializable per supportare la serializzazione della sessione HTTP
+ * nel caso in cui oggetti di questo tipo vengano salvati nella sessione.
+ */
+public class Ordine implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    // Chiave primaria autogenerata dal database
     private int id;
-    private int idUtente;      // Chi ha fatto l'ordine
-    private double totale;     // Prezzo totale pagato
-    private Date dataOrdine;   // Quando è stato fatto
-    private String stato;      // 'IN_PREPARAZIONE', 'SPEDITO', 'CONSEGNATO'
-    private String indirizzo;  // NUOVO
-    private String citta;      // NUOVO
-    private String cap;        // NUOVO
-    private String utenteEmail; 
 
+    // ID numerico dell'utente che ha effettuato l'ordine (FK verso tabella utente)
+    private int idUtente;
 
-    // Costruttore vuoto
+    // Email dell'utente: usata come riferimento diretto nelle query del DAO
+    // (la tabella 'ordine' usa utente_email come chiave di collegamento)
+    private String utenteEmail;
+
+    // Totale economico dell'ordine al momento dell'acquisto
+    private double totale;
+
+    // Data e ora in cui è stato effettuato l'ordine
+    private Date dataOrdine;
+
+    // Stato corrente dell'ordine, gestito dall'amministratore
+    // Valori possibili: 'In lavorazione', 'Spedito', 'Consegnato'
+    private String stato;
+
+    // Indirizzo di spedizione inserito dall'utente al momento del checkout
+    private String indirizzo;
+    private String citta;
+    private String cap;
+
+    // Costruttore vuoto, necessario per la creazione via setter (es. nella lettura dal ResultSet)
     public Ordine() {}
 
-    // Costruttore completo aggiornato
-    public Ordine(int id, int idUtente, double totale, Date dataOrdine, String stato, String indirizzo, String citta, String cap) {
+    // Costruttore completo, utile per istanziare un oggetto già popolato
+    public Ordine(int id, int idUtente, double totale, Date dataOrdine, String stato,
+                  String indirizzo, String citta, String cap) {
         this.id = id;
         this.idUtente = idUtente;
         this.totale = totale;
@@ -29,12 +56,15 @@ public class Ordine {
         this.cap = cap;
     }
 
-    // Getter e Setter esistenti
+    // Getter e Setter: incapsulamento degli attributi privati
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
     public int getIdUtente() { return idUtente; }
     public void setIdUtente(int idUtente) { this.idUtente = idUtente; }
+
+    public String getUtenteEmail() { return utenteEmail; }
+    public void setUtenteEmail(String utenteEmail) { this.utenteEmail = utenteEmail; }
 
     public double getTotale() { return totale; }
     public void setTotale(double totale) { this.totale = totale; }
@@ -45,7 +75,6 @@ public class Ordine {
     public String getStato() { return stato; }
     public void setStato(String stato) { this.stato = stato; }
 
-    // NUOVI Getter e Setter per l'indirizzo di spedizione
     public String getIndirizzo() { return indirizzo; }
     public void setIndirizzo(String indirizzo) { this.indirizzo = indirizzo; }
 
@@ -54,7 +83,4 @@ public class Ordine {
 
     public String getCap() { return cap; }
     public void setCap(String cap) { this.cap = cap; }
-    
-    public String getUtenteEmail() { return utenteEmail; }
-    public void setUtenteEmail(String utenteEmail) { this.utenteEmail = utenteEmail; }
 }

@@ -21,7 +21,7 @@ public class MainContext implements ServletContextListener {
         try {
             Context initCtx = new InitialContext();
             Context envCtx = (Context) initCtx.lookup("java:comp/env");
-            // Qui mettiamo il tuo DB invece di "jdbc/storage"
+            // Qui mettiamo il DB
             ds = (DataSource) envCtx.lookup("jdbc/tokyobites");
             
         } catch (NamingException e) {

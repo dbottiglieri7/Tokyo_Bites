@@ -13,17 +13,22 @@ public class LogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Recupera la sessione corrente, senza crearne una nuova se non esiste (false)
         HttpSession session = request.getSession(false);
         
         if (session != null) {
-            session.invalidate(); // Distrugge la sessione cancellando l'utente
+            /* Invalidando la sessione si distruggono tutti gli attributi,
+            compreso il 'sessionToken' e l'oggetto 'utenteLoggato', garantendo la chiusura sicura dell'accesso. */
+        	
+            session.invalidate(); 
         }
         
-        // Torna alla Home dopo il logout
+        // Pattern Post-Redirect-Get: reindirizza alla Home evitando il ricaricamento di richieste precedenti
         response.sendRedirect(request.getContextPath() + "/Home");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Mappiamo anche eventuali richieste POST sul metodo doGet per centralizzare la logica di sottomissione
         doGet(request, response);
     }
 }
